@@ -61,7 +61,12 @@ bot.textContent='Your AI response system is being connected. Welcome to Canon Jr
 chat.appendChild(bot);
 input.value='';
 });
+if ("serviceWorker" in navigator) {
+window.addEventListener("load", () => {
+navigator.serviceWorker.register("./sw.js")
+.catch(error => console.error("Service worker registration failed:", error));
+});
+}
 </script>
 </body>
 </html>
-  
