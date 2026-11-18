@@ -181,7 +181,42 @@ const chat = document.getElementById("chat");
 const statusText = document.getElementById("status");
 const send = document.getElementById("send");
 const welcome = document.getElementById("welcome");
+// CANON JR AI - VOICE INPUT
+const mic = document.getElementById("mic");
 
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (mic && SpeechRecognition) {
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "en-US";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  mic.addEventListener("click", () => {
+    recognition.start();
+    statusText.textContent = "Listening...";
+  });
+
+  recognition.onresult = (event) => {
+    input.value = event.results[0][0].transcript;
+    statusText.textContent = "Voice received. Press SEND.";
+  };
+
+  recognition.onerror = () => {
+    statusText.textContent = "Microphone error. Check permission.";
+  };
+
+  recognition.onend = () => {
+    if (statusText.textContent === "Listening...") {
+      statusText.textContent = "CANON AI • Ready";
+    }
+  };
+} else if (mic) {
+  mic.disabled = true;
+  statusText.textContent = "Voice input is not supported in this browser.";
+  }
 let history = [];
 
 function addMessage(text, type) {
