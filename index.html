@@ -2,132 +2,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d1b">
-<meta name="description" content="Canon Jr AI - Your personal AI assistant">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg">
-<title>Canon Jr AI</title>
-<style>
-:root{color-scheme:dark;--bg:#080d1b;--panel:#101a30;--panel2:#142139;--blue:#65caff;--cyan:#08b9ec;--muted:#9aacc5}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:white;font-family:Arial,sans-serif;min-height:100vh}
-header{height:68px;padding:0 18px;background:var(--panel);border-bottom:1px solid #20314c;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:11px;font-weight:800;color:var(--blue)}
-.brand-mark{width:38px;height:38px;border-radius:12px;background:#123c62;display:grid;place-items:center;color:var(--blue)}
-.header-actions{display:flex;gap:8px}
-button{cursor:pointer;border:0;border-radius:11px;padding:11px 14px;font-weight:700}
-.ghost{background:#1a2942;color:#dcecff;border:1px solid #294363}
-.primary{background:var(--cyan);color:#061322}
-main{max-width:850px;margin:auto;padding:22px 18px 150px}
-.welcome{text-align:center;padding:42px 12px 28px}
-.logo{font-size:44px;font-weight:900;color:var(--blue);letter-spacing:2px}
-.welcome h1{font-size:27px;margin:12px 0 8px}
-.welcome p{color:var(--muted)}
-.prompts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px auto 28px;max-width:650px}
-.prompt{background:var(--panel);border:1px solid #263a59;color:#dcecff;text-align:left;padding:15px;border-radius:14px}
-#chat{display:flex;flex-direction:column;gap:12px}
-.message{max-width:88%;padding:14px 16px;border-radius:16px;white-space:pre-wrap;line-height:1.5;overflow-wrap:anywhere}
-.bot{background:var(--panel2);border:1px solid #20314c;align-self:flex-start}
-.user{background:#173c61;align-self:flex-end}
-.sender{font-size:11px;color:var(--blue);font-weight:800;margin-bottom:5px}
-.composer-wrap{position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,var(--bg) 22%)}
-.composer{max-width:850px;margin:auto;display:flex;gap:9px;background:var(--panel);border:1px solid #294363;border-radius:16px;padding:8px}
-input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:10px;font-size:16px}
-input::placeholder{color:#8296b2}
-#sendBtn{min-width:76px}
-.hint{text-align:center;color:#71839e;font-size:11px;margin:8px}
-footer{text-align:center;color:#71839e;font-size:12px;padding:18px}
-@media(max-width:520px){main{padding:10px 14px 140px}.welcome{padding:28px 8px 18px}.welcome h1{font-size:23px}.logo{font-size:38px}.prompts{gap:8px}.prompt{font-size:13px;padding:12px}.message{max-width:94%}header{padding:0 13px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CANON AI</title>
 </head>
 <body>
-<header>
-<div class="brand"><div class="brand-mark">CJ</div><span>CANON JR AI</span></div>
-<div class="header-actions">
-<button class="ghost" id="langBtn" type="button">Kiswahili</button>
-<button class="ghost" id="newChatBtn" type="button">＋ New chat</button>
-</div>
-</header>
-<main>
-<section class="welcome">
-<div class="logo">CJ AI</div>
-<h1 id="welcomeTitle">Welcome to Canon Jr AI</h1>
-<p id="welcomeText">Your ideas. Your intelligence. Your future.</p>
-</section>
-<section class="prompts" id="prompts">
-<button class="prompt" data-prompt="Explain something to me in simple words.">✨ Explain something simply</button>
-<button class="prompt" data-prompt="Help me write a good message.">✍️ Help me write</button>
-<button class="prompt" data-prompt="Teach me something new today.">📚 Teach me something</button>
-<button class="prompt" data-prompt="Help me think of a creative project.">💡 Give me an idea</button>
-</section>
-<section id="chat" aria-live="polite">
-<div class="message bot"><div class="sender">CANON JR AI</div><span id="greeting">Hello! I'm Canon Jr AI. What would you like to work on today?</span></div>
-</section>
-<footer>Created by Canon Jr · Canon Jr AI</footer>
-</main>
-<div class="composer-wrap">
-<form class="composer" id="chatForm">
-<input id="userInput" autocomplete="off" placeholder="Message Canon Jr AI..." aria-label="Message Canon Jr AI" required>
-<button class="primary" id="sendBtn" type="submit">Send</button>
-</form>
-<p class="hint" id="hint">Canon Jr AI is being connected to its AI service.</p>
-</div>
-<script>
-const form=document.getElementById('chatForm');
-const input=document.getElementById('userInput');
-const chat=document.getElementById('chat');
-let language='en';
-function addMessage(text,who){
-const box=document.createElement('div');
-box.className='message '+who;
-if(who==='bot'){
-const label=document.createElement('div');
-label.className='sender';
-label.textContent='CANON JR AI';
-box.appendChild(label);
-}
-const body=document.createElement('span');
-body.textContent=text;
-box.appendChild(body);
-chat.appendChild(box);
-box.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function sendMessage(value){
-const message=(value||'').trim();
-if(!message)return;
-addMessage(message,'user');
-input.value='';
-addMessage(language==='sw'?'Ujumbe wako umepokelewa. Huduma ya AI bado inaunganishwa; hatua inayofuata ni kuunganisha backend salama.':'Your message has been received. The AI service is not connected yet; the next step is to connect a secure backend.','bot');
-}
-form.addEventListener('submit',e=>{
-e.preventDefault();
-sendMessage(input.value);
-});
-document.querySelectorAll('.prompt').forEach(button=>{
-button.addEventListener('click',()=>sendMessage(button.dataset.prompt));
-});
-document.getElementById('newChatBtn').addEventListener('click',()=>{
-chat.innerHTML='';
-addMessage(language==='sw'?'Karibu Canon Jr AI! Ungependa kufanya nini leo?':"Hello! I'm Canon Jr AI. What would you like to work on today?",'bot');
-input.focus();
-});
-document.getElementById('langBtn').addEventListener('click',()=>{
-language=language==='en'?'sw':'en';
-const sw=language==='sw';
-document.getElementById('langBtn').textContent=sw?'English':'Kiswahili';
-document.getElementById('welcomeTitle').textContent=sw?'Karibu Canon Jr AI':'Welcome to Canon Jr AI';
-document.getElementById('welcomeText').textContent=sw?'Mawazo yako. Akili yako. Mustakabali wako.':'Your ideas. Your intelligence. Your future.';
-input.placeholder=sw?'Andika ujumbe kwa Canon Jr AI...':'Message Canon Jr AI...';
-document.getElementById('sendBtn').textContent=sw?'Tuma':'Send';
-document.getElementById('hint').textContent=sw?'Huduma ya AI bado inaunganishwa.':'Canon Jr AI is being connected to its AI service.';
-});
-if('serviceWorker' in navigator){
-window.addEventListener('load',()=>{
-navigator.serviceWorker.register('./sw.js').catch(err=>console.error('Service worker:',err));
-});
-}
-</script>
+
+    <h1>Welcome to CANON AI</h1>
+    <p>Your personal AI assistant.</p>
+
 </body>
 </html>
