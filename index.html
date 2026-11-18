@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<title>Canon Jr AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080d1b;color:white;font-family:Arial}
+header{padding:20px;background:#101a30}
+header h2{color:#65caff}
+main{max-width:750px;margin:auto;padding:20px}
+.welcome{text-align:center;margin:55px 0}
+.logo{font-size:48px;color:#65caff;font-weight:bold}
+#chat{min-height:220px}
+.message{padding:14px;margin:12px 0;border-radius:14px;white-space:pre-wrap}
+.user{background:#173c61;margin-left:35px}
+.bot{background:#142139;margin-right:35px}
+form{display:flex;gap:10px}
+input{flex:1;min-width:0;padding:15px;border-radius:12px;background:#142139;color:white;border:1px solid #294363}
+button{background:#08b9ec;border:0;border-radius:12px;padding:12px;color:#061322;font-weight:bold}
+footer{text-align:center;padding:25px;color:#9aacc5}
+</style>
+</head>
+<body>
+<header><h2>CANON JR AI</h2><p>Your Personal AI Assistant</p></header>
+<main>
+<section class="welcome">
+<div class="logo">CJ AI</div>
+<h1>Welcome to Canon Jr AI</h1>
+<p>Your ideas. Your intelligence. Your future.</p>
+</section>
+<div id="chat">
+<div class="message bot">Hello! Welcome to Canon Jr AI. How can I help you today?</div>
+</div>
+<form id="chatForm">
+<input id="userInput" placeholder="Message Canon Jr AI..." required>
+<button type="submit">SEND</button>
+</form>
+</main>
+<footer>Created by Canon Jr</footer>
+<script>
+const form=document.getElementById('chatForm');
+const input=document.getElementById('userInput');
+const chat=document.getElementById('chat');
+form.addEventListener('submit',function(e){
+e.preventDefault();
+const message=input.value.trim();
+if(!message)return;
+const user=document.createElement('div');
+user.className='message user';
+user.textContent=message;
+chat.appendChild(user);
+const bot=document.createElement('div');
+bot.className='message bot';
+bot.textContent='Your AI response system is being connected. Welcome to Canon Jr AI!';
+chat.appendChild(bot);
+input.value='';
+});
+</script>
+</body>
+</html>
+  
