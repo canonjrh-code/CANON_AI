@@ -5,5 +5,13 @@
   "display": "standalone",
   "background_color": "#080d1b",
   "theme_color": "#080d1b",
-  "description": "Your personal AI assistant"
+  "description": "Your personal AI assistant",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }
