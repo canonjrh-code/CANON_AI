@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d1b">
+<title>Canon Jr AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080d1b;color:#f4f6ff;font-family:Arial,sans-serif}
+header{padding:22px;background:#111a30;border-bottom:1px solid #263451}
+h1{margin:0;color:#65caff}
+header p{color:#aab8d2;margin-bottom:0}
+main{max-width:700px;margin:25px auto;padding:15px}
+#chat{height:55vh;min-height:300px;overflow:auto;background:#101a2e;border:1px solid #263451;border-radius:15px;padding:15px}
+.msg{padding:12px;margin:10px 0;border-radius:12px;line-height:1.5;white-space:pre-wrap}
+.bot{background:#1b2a46}
+.user{background:#174b70;text-align:right}
+.controls{display:flex;gap:8px;margin-top:15px}
+input{flex:1;min-width:0;padding:14px;border-radius:10px;border:1px solid #344767;background:#111a30;color:white}
+button{padding:13px 17px;border:0;border-radius:10px;background:#36a9ed;color:#06101d;font-weight:bold}
+footer{text-align:center;color:#8291aa;padding:20px}
+</style>
+</head>
+<body>
+<header>
+<h1>CANON JR AI</h1>
+<p>Your personal AI assistant • English & Kiswahili</p>
+</header>
+<main>
+<div id="chat">
+<div class="msg bot">Hello! Welcome to Canon Jr AI. How can I help you today?</div>
+</div>
+<div class="controls">
+<input id="message" placeholder="Ask Canon Jr AI..." />
+<button onclick="sendMessage()">Send</button>
+</div>
+</main>
+<footer>Created by Canon Jr • Development in progress</footer>
+<script>
+function sendMessage(){
+ const input=document.getElementById('message');
+ const chat=document.getElementById('chat');
+ const value=input.value.trim();
+ if(!value)return;
+ const user=document.createElement('div');
+ user.className='msg user';
+ user.textContent=value;
+ chat.appendChild(user);
+ input.value='';
+ const reply=document.createElement('div');
+ reply.className='msg bot';
+ reply.textContent='Thanks for your message! Canon Jr AI is being developed. A live AI connection will be added in the next development stage.';
+ chat.appendChild(reply);
+ chat.scrollTop=chat.scrollHeight;
+}
+document.getElementById('message').addEventListener('keydown',e=>{
+ if(e.key==='Enter')sendMessage();
+});
+</script>
+</body>
+</html>
