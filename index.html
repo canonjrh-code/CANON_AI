@@ -3,146 +3,145 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d1b">
-<meta name="description" content="CANON JR AI - Your personal AI assistant">
-<link rel="manifest" href="./manifest.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080808">
 <title>CANON JR AI</title>
+<link rel="manifest" href="./manifest.webmanifest">
 
 <style>
-* {
-  box-sizing: border-box;
+:root {
+  --bg:#080808;
+  --panel:#151515;
+  --gold:#d6ad45;
+  --light:#ffe7a6;
 }
-
+* { box-sizing:border-box; }
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: #080d1b;
-  color: white;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--light);
+  font-family:Arial,sans-serif;
+  display:flex;
+  flex-direction:column;
 }
-
 header {
-  padding: 18px;
-  background: #101a30;
-  border-bottom: 1px solid #263650;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:#111;
+  border-bottom:1px solid var(--gold);
 }
-
 .logo {
-  background: #1677ff;
-  padding: 12px;
-  border-radius: 14px;
-  font-size: 22px;
-  font-weight: bold;
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ffe7a6,#a87919);
+  color:#080808;
+  font-size:25px;
+  font-weight:bold;
 }
-
-header h2 {
-  margin: 0;
-  color: #62a5ff;
-}
-
-header small {
-  color: #9eabc1;
-}
-
+header h2 { margin:0;color:var(--gold); }
+header small { color:#aaa; }
 main {
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
+  width:100%;
+  max-width:850px;
+  flex:1;
+  margin:auto;
+  padding:18px;
 }
-
 .welcome {
-  text-align: center;
-  margin: 60px 0 30px;
+  text-align:center;
+  margin:55px 0 35px;
 }
-
-.welcome h1 {
-  color: #62a5ff;
-}
-
-.welcome p {
-  color: #a8b4c9;
-}
-
+.welcome h1 { color:var(--gold); }
+.welcome p { color:#aaa; }
 #chat {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding-bottom:20px;
 }
-
 .msg {
-  padding: 14px 16px;
-  border-radius: 15px;
-  max-width: 90%;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  max-width:92%;
+  padding:15px;
+  border-radius:15px;
+  line-height:1.6;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
-
 .user {
-  background: #175dcc;
-  align-self: flex-end;
+  align-self:flex-end;
+  background:#493713;
+  border:1px solid var(--gold);
+  color:white;
 }
-
 .bot {
-  background: #17243b;
-  align-self: flex-start;
+  align-self:flex-start;
+  background:var(--panel);
+  border:1px solid #66501f;
 }
-
+.actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
 .status {
-  text-align: center;
-  color: #8fa2c1;
-  font-size: 12px;
-  padding: 10px;
+  text-align:center;
+  color:var(--gold);
+  padding:10px;
+  font-size:12px;
 }
-
-form {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
-  background: #101a30;
-  border-top: 1px solid #263650;
-  position: sticky;
-  bottom: 0;
+.controls,form {
+  display:flex;
+  gap:8px;
+  padding:12px;
+  background:#111;
+  border-top:1px solid #71551b;
 }
-
+form { position:sticky;bottom:0; }
 input {
-  flex: 1;
-  min-width: 0;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid #344663;
-  background: #080d1b;
-  color: white;
-  font-size: 16px;
+  flex:1;
+  min-width:0;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #8a6928;
+  background:#080808;
+  color:white;
+  font-size:16px;
 }
-
+select {
+  background:#171717;
+  color:var(--light);
+  border:1px solid var(--gold);
+  border-radius:10px;
+  padding:10px;
+}
 button {
-  background: #1677ff;
-  color: white;
-  border: 0;
-  border-radius: 12px;
-  padding: 0 20px;
-  font-size: 15px;
-  font-weight: bold;
+  background:linear-gradient(135deg,#ffe29a,#b88725);
+  color:#080808;
+  border:0;
+  border-radius:10px;
+  padding:11px 13px;
+  font-weight:bold;
+  cursor:pointer;
 }
-
-button:disabled {
-  opacity: .5;
+button:disabled { opacity:.5; }
+.actions button { font-size:12px; }
+@media(max-width:480px) {
+  header h2 { font-size:17px; }
+  .welcome h1 { font-size:22px; }
+  form,.controls { padding:9px; }
+  form button { padding:10px; }
 }
-
 </style>
 </head>
 
 <body>
-
 <header>
   <div class="logo">C</div>
   <div>
@@ -153,25 +152,25 @@ button:disabled {
 
 <main>
   <div class="welcome" id="welcome">
-    <h1>HELLO, I'M CANON AI</h1>
-    <p>Your ideas. Your assistant. Your future.</p>
+    <h1>WELCOME TO CANON JR AI</h1>
+    <p>Intelligence. Innovation. Your future.</p>
   </div>
-
   <div id="chat"></div>
 </main>
 
-<div class="status" id="status">
-  CANON AI • Ready
+<div class="controls">
+  <select id="voiceLanguage">
+    <option value="en-US">English voice</option>
+    <option value="sw-TZ">Kiswahili voice</option>
+  </select>
+  <button id="mic" type="button">🎙 START MIC</button>
 </div>
 
+<div class="status" id="status">CANON AI • READY</div>
+
 <form id="form">
-  <input
-    id="message"
-    placeholder="Ask CANON AI anything..."
-    autocomplete="off"
-    required
-  >
-  <button id="mic" type="button">🎙️</button> <button id="send" type="submit">SEND</button>
+  <input id="message" placeholder="Ask CANON AI anything..." required>
+  <button id="send" type="submit">SEND</button>
 </form>
 
 <script>
@@ -181,123 +180,206 @@ const chat = document.getElementById("chat");
 const statusText = document.getElementById("status");
 const send = document.getElementById("send");
 const welcome = document.getElementById("welcome");
-// CANON JR AI - VOICE INPUT
 const mic = document.getElementById("mic");
+const language = document.getElementById("voiceLanguage");
 
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-
-if (mic && SpeechRecognition) {
-  const recognition = new SpeechRecognition();
-
-  recognition.lang = "en-US";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  mic.addEventListener("click", () => {
-    recognition.start();
-    statusText.textContent = "Listening...";
-  });
-
-  recognition.onresult = (event) => {
-    input.value = event.results[0][0].transcript;
-    statusText.textContent = "Voice received. Press SEND.";
-  };
-
-  recognition.onerror = () => {
-    statusText.textContent = "Microphone error. Check permission.";
-  };
-
-  recognition.onend = () => {
-    if (statusText.textContent === "Listening...") {
-      statusText.textContent = "CANON AI • Ready";
-    }
-  };
-} else if (mic) {
-  mic.disabled = true;
-  statusText.textContent = "Voice input is not supported in this browser.";
-  }
 let history = [];
+let recognition = null;
+let listening = false;
 
-function addMessage(text, type) {
+function addMessage(message,type) {
   welcome.style.display = "none";
-
   const div = document.createElement("div");
   div.className = "msg " + type;
-  div.textContent = text;
+
+  const content = document.createElement("div");
+  content.textContent = message;
+  div.appendChild(content);
+
+  if(type === "bot") {
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const translate = document.createElement("button");
+    translate.textContent = "🌍 TRANSLATE TO SWAHILI";
+    translate.type = "button";
+    translate.onclick = () => translateMessage(message,div,translate);
+
+    const speak = document.createElement("button");
+    speak.textContent = "🔊 READ ALOUD";
+    speak.type = "button";
+    speak.onclick = () => speakMessage(message);
+
+    actions.append(translate,speak);
+    div.appendChild(actions);
+  }
 
   chat.appendChild(div);
-
-  window.scrollTo(0, document.body.scrollHeight);
+  window.scrollTo(0,document.body.scrollHeight);
 }
 
-form.addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const question = input.value.trim();
-
-  if (!question) return;
-
-  addMessage(question, "user");
-
-  input.value = "";
-  send.disabled = true;
-  statusText.textContent = "CANON AI is thinking...";
-
-  history.push({
-    role: "user",
-    content: question
-  });
+async function translateMessage(original,container,button) {
+  button.disabled = true;
+  button.textContent = "TRANSLATING...";
 
   try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        messages: history
+    const response = await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        messages:[{
+          role:"user",
+          content:"Translate this into natural Kiswahili. Return only the translation:\n\n"+original
+        }]
       })
     });
 
     const data = await response.json();
+    if(!response.ok) throw new Error(data.error || "Translation failed");
 
-    if (!response.ok) {
-      throw new Error(data.error || "AI connection failed.");
+    const result = document.createElement("div");
+    result.style.marginTop = "12px";
+    result.style.borderTop = "1px solid #8a6928";
+    result.style.paddingTop = "12px";
+    result.textContent = "KISWAHILI: " + data.reply;
+    container.appendChild(result);
+    button.textContent = "TRANSLATED";
+  } catch(error) {
+    button.textContent = "TRY AGAIN";
+    statusText.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function speakMessage(message) {
+  if(!("speechSynthesis" in window)) {
+    statusText.textContent = "Speech is not supported";
+    return;
+  }
+
+  speechSynthesis.cancel();
+  const speech = new SpeechSynthesisUtterance(message);
+  speech.lang = language.value;
+  speech.rate = 0.95;
+  speech.pitch = 0.9;
+  speechSynthesis.speak(speech);
+  statusText.textContent = "CANON AI • SPEAKING";
+
+  speech.onend = () => {
+    statusText.textContent = "CANON AI • READY";
+  };
+}
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    listening = true;
+    mic.textContent = "■ STOP MIC";
+    statusText.textContent = "LISTENING...";
+  };
+
+  recognition.onresult = event => {
+    let finalText = "";
+    let interimText = "";
+
+    for(let i=event.resultIndex;i<event.results.length;i++) {
+      if(event.results[i].isFinal) {
+        finalText += event.results[i][0].transcript;
+      } else {
+        interimText += event.results[i][0].transcript;
+      }
     }
 
-    const answer = data.reply || "I could not generate a response.";
+    if(finalText) {
+      input.value = (input.value + " " + finalText).trim();
+      statusText.textContent = "VOICE RECEIVED • PRESS SEND";
+    } else if(interimText) {
+      statusText.textContent = "HEARING: " + interimText;
+    }
+  };
 
-    addMessage(answer, "bot");
+  recognition.onerror = event => {
+    statusText.textContent = "MIC ERROR: " + event.error;
+  };
 
-    history.push({
-      role: "assistant",
-      content: answer
+  recognition.onend = () => {
+    listening = false;
+    mic.textContent = "🎙 START MIC";
+    if(statusText.textContent === "LISTENING...") {
+      statusText.textContent = "CANON AI • READY";
+    }
+  };
+
+  mic.onclick = () => {
+    if(listening) {
+      recognition.stop();
+      return;
+    }
+    recognition.lang = language.value;
+    try {
+      recognition.start();
+    } catch(error) {
+      statusText.textContent = "MIC IS BUSY. TRY AGAIN.";
+    }
+  };
+} else {
+  mic.disabled = true;
+  statusText.textContent = "VOICE INPUT NOT SUPPORTED. TRY CHROME.";
+}
+
+language.onchange = () => {
+  if(listening) recognition.stop();
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+};
+
+form.onsubmit = async event => {
+  event.preventDefault();
+
+  const question = input.value.trim();
+  if(!question) return;
+
+  addMessage(question,"user");
+  input.value = "";
+  send.disabled = true;
+  statusText.textContent = "CANON AI IS THINKING...";
+
+  history.push({role:"user",content:question});
+
+  try {
+    const response = await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({messages:history})
     });
 
-    statusText.textContent = "CANON AI • Online";
+    const data = await response.json();
+    if(!response.ok) throw new Error(data.error || "AI connection failed");
 
-  } catch (error) {
+    const answer = data.reply || "No response received.";
+    addMessage(answer,"bot");
+    history.push({role:"assistant",content:answer});
+    statusText.textContent = "CANON AI • ONLINE";
+  } catch(error) {
     history.pop();
-
-    addMessage(
-      "Connection problem: " + error.message,
-      "bot"
-    );
-
-    statusText.textContent = "CANON AI • Connection problem";
-
+    addMessage("Connection problem: "+error.message,"bot");
+    statusText.textContent = "CANON AI • CONNECTION PROBLEM";
   } finally {
     send.disabled = false;
     input.focus();
   }
-});
+};
 
-if ("serviceWorker" in navigator) {
+if("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js")
-    .catch(error => console.log("Service worker:", error));
+    .catch(error => console.log("Service worker:",error));
 }
 </script>
-
 </body>
 </html>
