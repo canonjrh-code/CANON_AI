@@ -4,164 +4,265 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CANON JR AI</title>
-<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#080d1b">
+<meta name="description" content="CANON JR AI - Your personal AI assistant">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>CANON JR AI</title>
+
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#080d1b;color:white;
- font-family:Arial,sans-serif;
- min-height:100vh;display:flex;flex-direction:column
+* {
+  box-sizing: border-box;
 }
-header{
- padding:20px;background:#101a30;
- border-bottom:1px solid #263650;
- display:flex;align-items:center;gap:12px
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #080d1b;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
-.logo{
- background:#1677ff;padding:12px;border-radius:14px;
- font-weight:bold;font-size:20px
+
+header {
+  padding: 18px;
+  background: #101a30;
+  border-bottom: 1px solid #263650;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-header h2{margin:0;color:#62a5ff}
-header small{color:#9eabc1}
-main{
- flex:1;padding:20px;max-width:800px;
- width:100%;margin:auto;display:flex;flex-direction:column
+
+.logo {
+  background: #1677ff;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: bold;
 }
-.welcome{text-align:center;margin:65px 0 30px}
-.welcome h1{font-size:32px;color:#62a5ff}
-.welcome p{color:#a8b4c9}
-#chat{display:flex;flex-direction:column;gap:14px}
-.msg{
- padding:14px 16px;border-radius:15px;
- max-width:90%;line-height:1.6;white-space:pre-wrap
+
+header h2 {
+  margin: 0;
+  color: #62a5ff;
 }
-.user{background:#175dcc;align-self:flex-end}
-.bot{background:#17243b;align-self:flex-start}
-form{
- display:flex;gap:10px;padding:15px;
- background:#101a30;border-top:1px solid #263650;
- position:sticky;bottom:0
+
+header small {
+  color: #9eabc1;
 }
-input{
- flex:1;min-width:0;padding:15px;border-radius:12px;
- border:1px solid #344663;background:#080d1b;
- color:white;font-size:16px;outline:none
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
 }
-button{
- background:#1677ff;color:white;border:0;
- border-radius:12px;padding:0 22px;font-size:16px;
- font-weight:bold
+
+.welcome {
+  text-align: center;
+  margin: 60px 0 30px;
 }
-button:disabled{opacity:.5}
-.status{text-align:center;color:#8fa2c1;font-size:12px;padding:8px}
+
+.welcome h1 {
+  color: #62a5ff;
+}
+
+.welcome p {
+  color: #a8b4c9;
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.msg {
+  padding: 14px 16px;
+  border-radius: 15px;
+  max-width: 90%;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.user {
+  background: #175dcc;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #17243b;
+  align-self: flex-start;
+}
+
+.status {
+  text-align: center;
+  color: #8fa2c1;
+  font-size: 12px;
+  padding: 10px;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background: #101a30;
+  border-top: 1px solid #263650;
+  position: sticky;
+  bottom: 0;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #344663;
+  background: #080d1b;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  background: #1677ff;
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+button:disabled {
+  opacity: .5;
+}
+
 </style>
 </head>
+
 <body>
+
 <header>
- <div class="logo">C</div>
- <div>
-  <h2>CANON JR AI</h2>
-  <small>Your personal AI assistant</small>
- </div>
+  <div class="logo">C</div>
+  <div>
+    <h2>CANON JR AI</h2>
+    <small>Your personal AI assistant</small>
+  </div>
 </header>
 
 <main>
- <div class="welcome" id="welcome">
-  <h1>HELLO, I'M CANON AI</h1>
-  <p>Your ideas. Your assistant. Your future.</p>
- </div>
- <div id="chat"></div>
+  <div class="welcome" id="welcome">
+    <h1>HELLO, I'M CANON AI</h1>
+    <p>Your ideas. Your assistant. Your future.</p>
+  </div>
+
+  <div id="chat"></div>
 </main>
 
-<div class="status" id="status">CANON AI • Ready</div>
+<div class="status" id="status">
+  CANON AI • Ready
+</div>
 
 <form id="form">
- <input id="message" placeholder="Ask CANON AI anything..." autocomplete="off" required>
- <button id="send" type="submit">SEND</button>
+  <input
+    id="message"
+    placeholder="Ask CANON AI anything..."
+    autocomplete="off"
+    required
+  >
+  <button id="send" type="submit">SEND</button>
 </form>
 
-<script type="module">
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+<script>
+const form = document.getElementById("form");
+const input = document.getElementById("message");
+const chat = document.getElementById("chat");
+const statusText = document.getElementById("status");
+const send = document.getElementById("send");
+const welcome = document.getElementById("welcome");
 
-import { getAI, getGenerativeModel }
-from "https://www.gstatic.com/firebasejs/11.6.0/firebase-ai.js";
+let history = [];
 
-// ADD YOUR FIREBASE WEB CONFIG HERE
-const firebaseConfig = {
- apiKey: "YOUR_API_KEY",
- authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
- projectId: "YOUR_PROJECT_ID",
- appId: "YOUR_APP_ID"
-};
+function addMessage(text, type) {
+  welcome.style.display = "none";
 
-const app = initializeApp(firebaseConfig);
-const ai = getAI(app);
-const model = getGenerativeModel(ai,{
- model: "gemini-2.0-flash"
-});
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.textContent = text;
 
-const form=document.getElementById("form");
-const input=document.getElementById("message");
-const chat=document.getElementById("chat");
-const status=document.getElementById("status");
-const send=document.getElementById("send");
+  chat.appendChild(div);
 
-let history=[];
-
-function addMessage(text,type){
- const div=document.createElement("div");
- div.className="msg "+type;
- div.textContent=text;
- chat.appendChild(div);
- window.scrollTo(0,document.body.scrollHeight);
+  window.scrollTo(0, document.body.scrollHeight);
 }
 
-form.addEventListener("submit",async(e)=>{
- e.preventDefault();
- const question=input.value.trim();
- if(!question)return;
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
 
- addMessage(question,"user");
- input.value="";
- send.disabled=true;
- status.textContent="CANON AI is thinking...";
+  const question = input.value.trim();
 
- try{
-  const conversation=history.concat([
-   {role:"user",parts:[{text:question}]}
-  ]);
+  if (!question) return;
 
-  const result=await model.generateContent({
-   contents:conversation,
-   systemInstruction:
-    "You are CANON JR AI, a helpful, friendly assistant. Answer clearly and support English and Swahili."
+  addMessage(question, "user");
+
+  input.value = "";
+  send.disabled = true;
+  statusText.textContent = "CANON AI is thinking...";
+
+  history.push({
+    role: "user",
+    content: question
   });
 
-  const answer=result.response.text();
-  addMessage(answer,"bot");
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: history
+      })
+    });
 
-  history.push(
-   {role:"user",parts:[{text:question}]},
-   {role:"model",parts:[{text:answer}]}
-  );
+    const data = await response.json();
 
-  status.textContent="CANON AI • Online";
- }catch(error){
-  addMessage("Connection error. Check your Firebase configuration and AI Logic setup.","bot");
-  status.textContent="CANON AI • Connection problem";
-  console.error(error);
- }finally{
-  send.disabled=false;
-  input.focus();
- }
+    if (!response.ok) {
+      throw new Error(data.error || "AI connection failed.");
+    }
+
+    const answer = data.reply || "I could not generate a response.";
+
+    addMessage(answer, "bot");
+
+    history.push({
+      role: "assistant",
+      content: answer
+    });
+
+    statusText.textContent = "CANON AI • Online";
+
+  } catch (error) {
+    history.pop();
+
+    addMessage(
+      "Connection problem: " + error.message,
+      "bot"
+    );
+
+    statusText.textContent = "CANON AI • Connection problem";
+
+  } finally {
+    send.disabled = false;
+    input.focus();
+  }
 });
 
-if("serviceWorker" in navigator){
- navigator.serviceWorker.register("./sw.js").catch(console.error);
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js")
+    .catch(error => console.log("Service worker:", error));
 }
 </script>
+
 </body>
 </html>
