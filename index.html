@@ -8,6 +8,43 @@
 <title>CANON JR AI</title>
 <link rel="manifest" href="./manifest.webmanifest">
 
+/* CANON JR AI - JARVIS ANIMATION */
+
+.jarvis-orb {
+  position: relative;
+  transition: .3s ease;
+}
+
+.jarvis-orb.listening {
+  animation: jarvisListening 1.2s infinite;
+}
+
+.jarvis-orb.speaking {
+  animation: jarvisSpeaking .55s infinite alternate;
+}
+
+@keyframes jarvisListening {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 25px #d6ad4540;
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 55px #d6ad45;
+  }
+}
+
+@keyframes jarvisSpeaking {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 25px #d6ad45;
+  }
+  to {
+    transform: scale(1.13);
+    box-shadow: 0 0 75px #f4d47c;
+  }
+}
+
 <style>
 :root {
   --bg:#080808;
