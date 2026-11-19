@@ -4,787 +4,619 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080808">
-<title>CANON JR AI</title>
-<link rel="manifest" href="./manifest.webmanifest">
-
-/* CANON JR AI - JARVIS ANIMATION */
-
-.jarvis-orb {
-  position: relative;
-  transition: .3s ease;
-}
-
-.jarvis-orb.listening {
-  animation: jarvisListening 1.2s infinite;
-}
-
-.jarvis-orb.speaking {
-  animation: jarvisSpeaking .55s infinite alternate;
-}
-
-@keyframes jarvisListening {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 25px #d6ad4540;
-  }
-  50% {
-    transform: scale(1.08);
-    box-shadow: 0 0 55px #d6ad45;
-  }
-}
-
-@keyframes jarvisSpeaking {
-  from {
-    transform: scale(1);
-    box-shadow: 0 0 25px #d6ad45;
-  }
-  to {
-    transform: scale(1.13);
-    box-shadow: 0 0 75px #f4d47c;
-  }
-}
+<meta name="theme-color" content="#080603">
+<title>CANON JR AI | Gold Jarvis Edition</title>
 
 <style>
-:root {
-  --bg:#080808;
-  --panel:#151515;
-  --panel2:#211b10;
-  --gold:#d6ad45;
-  --gold2:#f4d47c;
-  --text:#f5f1e7;
-  --muted:#aaa49a;
-  --border:#49391d;
+:root{
+ --gold:#ffbd26;
+ --gold2:#ffe58a;
+ --black:#080603;
+ --panel:#100d07;
+ --green:#8cff42;
+ --muted:#b7a47b;
 }
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:radial-gradient(ellipse at 50% 40%,#211506,#080603 65%);
+ color:white;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
 }
-button,textarea,input {font:inherit}
-button {cursor:pointer}
-.app {min-height:100vh;padding-bottom:100px}
-
-header {
-  height:70px;
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:#101010;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 17px;
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+header{
+ margin:18px;
+ min-height:110px;
+ border:1px solid var(--gold);
+ border-radius:25px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ padding:12px 20px;
+ background:linear-gradient(110deg,#171006,#050403);
+ box-shadow:0 0 20px #d99a2330;
 }
-.brand {display:flex;align-items:center;gap:11px}
-.logo {
-  width:43px;height:43px;
-  display:grid;place-items:center;
-  border-radius:13px;
-  background:linear-gradient(135deg,#ffe49a,#a77b26);
-  color:#080808;font-size:24px;font-weight:900;
-  box-shadow:0 0 18px #d6ad4540;
+.brand{display:flex;align-items:center;gap:18px}
+.logo{
+ width:105px;height:105px;
+ border:3px solid var(--gold);
+ border-radius:50%;
+ display:grid;place-items:center;
+ color:var(--gold);
+ font-size:68px;
+ font-weight:bold;
+ box-shadow:0 0 22px #ffbd2670,inset 0 0 18px #ffbd2640;
+ position:relative;
 }
-.brand h2 {font-size:16px;margin:0;color:var(--gold2)}
-.brand small {font-size:10px;color:var(--muted)}
-.header-btn {
-  background:#211b10;
-  border:1px solid var(--border);
-  color:var(--gold2);
-  border-radius:10px;
-  padding:10px 13px;
+.logo:before{
+ content:"♛";
+ position:absolute;top:-18px;
+ font-size:35px;color:var(--gold2);
 }
-
-main {max-width:800px;margin:auto;padding:18px 15px}
-.mode {display:none;animation:appear .3s ease}
-.mode.active {display:block}
-@keyframes appear {
-  from {opacity:0;transform:translateY(10px)}
-  to {opacity:1;transform:translateY(0)}
+.brand h1{
+ margin:0;color:var(--gold2);
+ font-size:clamp(22px,4vw,40px);
+ letter-spacing:2px;
 }
-
-.welcome {
-  text-align:center;
-  padding:40px 5px 25px;
+.brand p{margin:7px 0;color:#f5d66e;letter-spacing:1px}
+.ready{
+ color:var(--green);
+ font-weight:bold;
+ white-space:nowrap;
 }
-.orb {
-  width:105px;height:105px;
-  margin:10px auto 22px;
-  border-radius:50%;
-  display:grid;place-items:center;
-  font-size:46px;font-weight:bold;
-  color:var(--gold2);
-  background:radial-gradient(circle,#57421c,#17130b 70%);
-  border:2px solid #9d792f;
-  box-shadow:0 0 35px #d6ad4530;
+.dot{
+ display:inline-block;width:13px;height:13px;
+ border-radius:50%;background:var(--green);
+ box-shadow:0 0 15px var(--green);
+ margin-right:9px;
 }
-h1 {color:var(--gold2);font-size:29px;margin:10px 0}
-.subtitle {color:var(--muted);line-height:1.6;font-size:14px}
-
-.section-title {
-  color:var(--gold2);
-  font-size:14px;
-  margin:20px 0 12px;
+nav{display:flex;gap:5px}
+nav button{
+ border:1px solid #4b3512;
+ background:#100c07;
+ color:var(--gold2);
+ padding:15px 17px;
+ border-radius:18px;
+ font-size:16px;
 }
-.shortcuts {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:11px;
-  margin-top:25px;
+nav button.active,nav button:hover{
+ background:linear-gradient(#ffc832,#a96b00);
+ color:#120b00;
+ box-shadow:0 0 18px #ffbd2670;
 }
-.shortcut {
-  padding:16px 12px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
-  color:white;text-align:left;
+main{
+ display:grid;
+ grid-template-columns:minmax(260px,34%) 1fr;
+ gap:22px;
+ margin:22px;
 }
-.shortcut strong {display:block;color:var(--gold2);margin-bottom:7px}
-.shortcut small {color:var(--muted)}
-
-.panel {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:17px;
-  margin-bottom:15px;
+.panel{
+ border:1px solid var(--gold);
+ border-radius:27px;
+ background:linear-gradient(145deg,#151006,#050403);
+ box-shadow:0 0 20px #ffbd2615;
+ overflow:hidden;
 }
-.panel-title {color:var(--gold2);font-weight:bold;margin-bottom:8px}
-.muted {color:var(--muted);font-size:13px;line-height:1.6}
-
-#chat {
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-  padding-bottom:15px;
+.left{padding:25px;text-align:center}
+.globe{
+ width:min(100%,350px);
+ aspect-ratio:1;
+ margin:10px auto 20px;
+ position:relative;
+ display:grid;place-items:center;
 }
-.message {display:flex;gap:9px;align-items:flex-start}
-.message.user {flex-direction:row-reverse}
-.avatar {
-  width:33px;height:33px;
-  flex-shrink:0;
-  display:grid;place-items:center;
-  border-radius:50%;
-  background:#332710;
-  border:1px solid var(--gold);
-  color:var(--gold2);
-  font-size:11px;font-weight:bold;
+.globe-core{
+ width:75%;height:75%;
+ border-radius:50%;
+ border:2px solid var(--gold);
+ background:
+ radial-gradient(circle at 35% 30%,#ffe58a,#d88a08 18%,#5b3000 55%,#090603 75%);
+ box-shadow:0 0 35px #ffb30090,inset 0 0 35px #ffdc5d;
+ position:relative;
+ overflow:hidden;
+ animation:glow 3s infinite alternate;
 }
-.bubble {
-  max-width:85%;
-  padding:13px 15px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
-  white-space:pre-wrap;
-  line-height:1.6;
-  overflow-wrap:anywhere;
+.globe-core:before{
+ content:"🌍";
+ position:absolute;inset:0;
+ display:grid;place-items:center;
+ font-size:clamp(100px,20vw,210px);
+ filter:sepia(1) saturate(2) brightness(1.15);
 }
-.user .bubble {background:#332713;border-color:#80632b}
-.message-tools {display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
-.message-tools button {
-  background:#292319;
-  border:1px solid var(--border);
-  color:var(--gold2);
-  border-radius:8px;
-  padding:7px;
-  font-size:11px;
+.orbit{
+ position:absolute;
+ width:110%;height:35%;
+ border:2px solid var(--gold);
+ border-radius:50%;
+ transform:rotate(-18deg);
+ box-shadow:0 0 12px var(--gold);
+ animation:rotate 9s linear infinite;
 }
-
-.composer {
-  background:#171717;
-  border:1px solid #80632b;
-  border-radius:17px;
-  padding:10px;
-  margin-top:15px;
+.orbit.two{transform:rotate(65deg);animation-direction:reverse}
+.orbit.three{transform:rotate(0deg);width:120%;height:65%}
+@keyframes rotate{to{rotate:360deg}}
+@keyframes glow{
+ from{filter:brightness(.8)}
+ to{filter:brightness(1.3)}
 }
-#messageInput {
-  width:100%;
-  background:transparent;
-  border:0;outline:0;
-  color:white;
-  padding:10px;
-  min-height:48px;
-  resize:vertical;
+.hello{
+ color:var(--gold);
+ font-size:clamp(30px,5vw,48px);
+ margin:12px 0;
+ text-shadow:0 0 15px #ffbd26;
 }
-.composer-actions {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.left-sub{font-size:23px}
+.power{
+ border:1px solid var(--gold);
+ border-radius:20px;
+ padding:16px;
+ margin-top:28px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ text-align:left;
+ color:var(--gold2);
 }
-.action-btn {
-  background:#292319;
-  color:var(--gold2);
-  border:1px solid var(--border);
-  padding:10px 14px;
-  border-radius:11px;
+.power strong{font-size:19px}
+.power small{color:white}
+.right{padding:20px}
+.voice-head{
+ display:flex;align-items:center;gap:20px;
+ border-bottom:1px solid #b98b30;
+ padding:8px 12px 18px;
 }
-.send-btn {
-  background:linear-gradient(135deg,#ffe49a,#b88a30);
-  color:#090909;
-  border:0;
-  border-radius:11px;
-  padding:11px 19px;
-  font-weight:bold;
+.mic-small{
+ width:90px;height:90px;border-radius:50%;
+ border:1px solid var(--gold);
+ display:grid;place-items:center;
+ font-size:45px;color:var(--gold);
+ box-shadow:0 0 20px #ffbd2630;
 }
-.status {
-  text-align:center;
-  color:var(--muted);
-  font-size:10px;
-  margin-top:12px;
+.voice-head h2{
+ color:var(--gold2);font-size:30px;margin:0 0 6px;
 }
-
-.bottom-nav {
-  position:fixed;
-  bottom:0;left:0;right:0;
-  z-index:30;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  padding:9px 8px calc(9px + env(safe-area-inset-bottom));
-  background:#101010;
-  border-top:1px solid var(--border);
+.voice-head p{margin:0;font-size:19px}
+.voice-stage{
+ min-height:285px;
+ display:flex;align-items:center;
+ justify-content:center;
+ position:relative;
+ overflow:hidden;
 }
-.nav-btn {
-  border:0;
-  background:transparent;
-  color:#918979;
-  padding:9px 3px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:5px;
-  font-size:11px;
+.waves{
+ position:absolute;
+ display:flex;align-items:center;
+ justify-content:space-around;
+ width:100%;height:100px;
+ gap:4px;
+ opacity:.85;
 }
-.nav-btn span {font-size:22px}
-.nav-btn.active {color:var(--gold2)}
-.nav-btn.active span {filter:drop-shadow(0 0 7px #d6ad45)}
-
-.jarvis-orb {
-  width:145px;height:145px;
-  margin:28px auto;
-  border-radius:50%;
-  display:grid;place-items:center;
-  font-size:49px;
-  color:var(--gold2);
-  background:radial-gradient(circle,#59421a,#17130b 70%);
-  border:2px solid var(--gold);
-  box-shadow:0 0 35px #d6ad4540;
+.waves i{
+ width:3px;
+ height:var(--h);
+ background:var(--gold);
+ box-shadow:0 0 8px var(--gold);
+ border-radius:5px;
+ animation:wave .8s ease-in-out infinite alternate;
+ animation-delay:var(--d);
 }
-.jarvis-orb.listening {
-  animation:pulse 1.5s infinite;
+@keyframes wave{
+ to{transform:scaleY(.3)}
 }
-@keyframes pulse {
-  50% {box-shadow:0 0 55px #e2b84d90}
+.mic-orb{
+ width:205px;height:205px;
+ border:4px solid var(--gold);
+ border-radius:50%;
+ display:grid;place-items:center;
+ z-index:1;
+ background:radial-gradient(circle,#382307,#090603 70%);
+ box-shadow:0 0 15px var(--gold),0 0 45px #ffbd2680,inset 0 0 30px #ffbd2640;
+ animation:pulse 2s infinite;
 }
-.primary-btn {
-  width:100%;
-  padding:14px;
-  border:1px solid var(--gold);
-  border-radius:13px;
-  background:linear-gradient(135deg,#ffe49a,#a77b26);
-  color:#080808;
-  font-weight:bold;
-  margin-top:10px;
+.mic-orb span{font-size:85px;color:var(--gold2)}
+@keyframes pulse{
+ 50%{transform:scale(1.06);box-shadow:0 0 35px var(--gold),0 0 75px #ffbd2680}
 }
-.secondary-btn {
-  width:100%;
-  padding:13px;
-  background:#211b10;
-  border:1px solid var(--border);
-  color:var(--gold2);
-  border-radius:12px;
-  margin-top:9px;
+.message{
+ border:1px solid var(--gold);
+ border-radius:23px;
+ padding:20px;
+ display:flex;gap:20px;
+ align-items:center;
+ font-size:19px;
+ line-height:1.6;
+ background:#100c07;
 }
-#imageInput {display:none}
-.preview {
-  width:100%;
-  max-height:350px;
-  object-fit:contain;
-  border-radius:12px;
-  display:none;
-  margin:12px 0;
-  background:#080808;
+.sound-icon{font-size:35px;color:var(--gold)}
+.voice-style{
+ text-align:center;color:var(--gold);
+ font-size:19px;margin:17px 0;
 }
-textarea.studio-input {
-  width:100%;
-  min-height:85px;
-  resize:vertical;
-  background:#090909;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:12px;
-  color:white;
-  margin-top:12px;
+.controls{
+ display:flex;justify-content:center;
+ align-items:center;gap:22px;flex-wrap:wrap;
 }
-#studioFileName {color:var(--muted);font-size:12px}
-
-@media(max-width:480px) {
-  h1 {font-size:25px}
-  main {padding:12px}
-  .bubble {max-width:88%}
+.play{
+ background:linear-gradient(120deg,#ffe28b,#e49b00);
+ border:2px solid #fff0a0;
+ border-radius:50px;
+ padding:20px 35px;
+ color:#140d00;
+ font-size:20px;
+ font-weight:bold;
+ box-shadow:0 0 20px #ffbd2670;
+}
+.stop{
+ width:80px;height:80px;border-radius:50%;
+ background:#090603;
+ color:var(--gold);
+ border:2px solid var(--gold);
+ font-size:28px;
+}
+.statusbar{
+ margin-top:22px;
+ border:1px solid var(--gold);
+ border-radius:25px;
+ display:flex;justify-content:space-around;
+ padding:23px 10px;
+ color:var(--gold2);
+ gap:10px;flex-wrap:wrap;
+}
+.statusbar span{font-weight:bold;font-size:18px}
+.statusbar .active-status{color:var(--green)}
+.page{display:none}
+.page.show{display:block}
+.content{
+ padding:25px;
+}
+.content h2{color:var(--gold2)}
+.content input,.content textarea{
+ width:100%;padding:14px;
+ background:#080603;color:white;
+ border:1px solid var(--gold);
+ border-radius:12px;margin:10px 0;
+}
+.action{
+ background:linear-gradient(120deg,#ffe28b,#d18b00);
+ border:0;padding:13px 25px;
+ border-radius:12px;font-weight:bold;
+ color:#160d00;
+}
+.chat-output{
+ min-height:200px;
+ border:1px solid #73521c;
+ border-radius:15px;padding:15px;
+ margin:15px 0;white-space:pre-wrap;
+}
+.preview{
+ width:100%;max-height:350px;
+ object-fit:contain;margin-top:15px;
+}
+footer{
+ text-align:center;padding:20px;
+ color:#aa8c4c;font-size:13px;
+}
+@media(max-width:950px){
+ header{flex-wrap:wrap}
+ nav{width:100%;overflow-x:auto}
+ nav button{flex:1;min-width:75px;padding:12px 8px}
+ main{grid-template-columns:1fr}
+ .globe{max-width:290px}
+}
+@media(max-width:500px){
+ header{margin:9px;padding:12px}
+ .logo{width:65px;height:65px;font-size:42px}
+ .brand p{font-size:10px}
+ .ready{font-size:12px}
+ main{margin:10px;gap:12px}
+ .right,.left{padding:15px}
+ .voice-head h2{font-size:21px}
+ .mic-orb{width:160px;height:160px}
+ .mic-orb span{font-size:65px}
+ .message{font-size:15px;padding:13px}
+ .play{font-size:15px;padding:17px 22px}
 }
 </style>
 </head>
 
 <body>
-<div class="app">
 
 <header>
-  <div class="brand">
-    <div class="logo">C</div>
-    <div>
-      <h2>CANON JR AI</h2>
-      <small>PERSONAL AI ASSISTANT</small>
-    </div>
+ <div class="brand">
+  <div class="logo">C</div>
+  <div>
+   <h1>CANON JR AI</h1>
+   <p>PERSONAL INTELLIGENCE SYSTEM</p>
   </div>
-  <button class="header-btn" id="newChat">＋ New</button>
+ </div>
+
+ <div class="ready"><span class="dot"></span>SYSTEM READY</div>
+
+ <nav>
+  <button class="active" onclick="showPage('home',this)">⌂<br>Home</button>
+  <button onclick="showPage('chat',this)">▢<br>Chat</button>
+  <button onclick="showPage('jarvis',this)">🎙<br>Jarvis</button>
+  <button onclick="showPage('studio',this)">▧<br>Studio</button>
+  <button onclick="showPage('settings',this)">⚙<br>Settings</button>
+ </nav>
 </header>
 
-<main>
-
-<!-- CHAT MODE -->
-<section class="mode active" id="chatMode">
-
-  <div class="welcome" id="welcome">
-    <div class="orb">C</div>
-    <h1>Hello, Canon.</h1>
-    <p class="subtitle">
-      Your personal AI assistant is ready.<br>
-      What shall we do today?
-    </p>
-
-    <div class="shortcuts">
-      <button class="shortcut" data-prompt="Tell me something interesting.">
-        <strong>✦ Explore ideas</strong>
-        <small>Discover something new</small>
-      </button>
-      <button class="shortcut" data-prompt="Help me create something.">
-        <strong>✎ Creativity</strong>
-        <small>Writing and ideas</small>
-      </button>
-      <button class="shortcut" data-prompt="Teach me something new.">
-        <strong>◎ Learning</strong>
-        <small>Understand new topics</small>
-      </button>
-      <button class="shortcut" data-prompt="What can you do?">
-        <strong>✧ Meet Canon AI</strong>
-        <small>Explore your assistant</small>
-      </button>
-    </div>
+<main id="home" class="page show">
+ <section class="panel left">
+  <div class="globe">
+   <div class="globe-core"></div>
+   <div class="orbit"></div>
+   <div class="orbit two"></div>
+   <div class="orbit three"></div>
   </div>
 
-  <div id="chat"></div>
+  <h1 class="hello" id="greeting">Hello, Canon.</h1>
+  <p class="left-sub">Your assistant is ready.</p>
 
-  <div class="composer">
-    <form id="chatForm">
-      <textarea id="messageInput"
-        placeholder="Message CANON JR AI..."
-        required></textarea>
-      <div class="composer-actions">
-        <button class="action-btn" id="chatMic" type="button">🎙</button>
-        <button class="send-btn" id="sendBtn" type="submit">SEND ↑</button>
-      </div>
-    </form>
+  <div class="power">
+   <div>
+    <strong>⚡ Canon Jr AI</strong><br>
+    <small>Powered by Intelligence</small>
+   </div>
+   <span style="font-size:35px">▂▅▇</span>
   </div>
-  <div class="status" id="status">CANON JR AI • READY</div>
-</section>
+ </section>
 
-<!-- JARVIS MODE -->
-<section class="mode" id="jarvisMode">
-  <div class="welcome">
-    <div class="jarvis-orb" id="jarvisOrb">C</div>
-    <h1>JARVIS VOICE</h1>
-    <p class="subtitle">
-      Speak to Canon AI using your microphone.
-      Your assistant can respond using voice.
-    </p>
+ <section class="panel right">
+  <div class="voice-head">
+   <div class="mic-small">🎙</div>
+   <div>
+    <h2>JARVIS VOICE ASSISTANT</h2>
+    <p>Speak • Listen • Get Results</p>
+   </div>
   </div>
 
-  <div class="panel">
-    <div class="panel-title">VOICE ASSISTANT</div>
-    <p class="muted" id="voiceStatus">Ready to listen.</p>
-    <button class="primary-btn" id="startListening">
-      🎙 START TALKING
-    </button>
-    <button class="secondary-btn" id="stopListening">
-      STOP LISTENING
-    </button>
-    <p class="muted" style="margin-top:15px">
-      Voice recognition and spoken replies depend on browser support.
-    </p>
+  <div class="voice-stage">
+   <div class="waves" id="waves"></div>
+   <div class="mic-orb" id="orb">
+    <span>🎙</span>
+   </div>
   </div>
 
-  <div class="panel">
-    <div class="panel-title">YOUR MESSAGE</div>
-    <p id="voiceTranscript" class="muted">Your spoken words will appear here.</p>
+  <div class="message">
+   <span class="sound-icon">▥</span>
+   <div id="response">
+    Good evening, Canon. All systems are standing by.
+    Your personal assistant is ready. How may I assist you today?
+   </div>
   </div>
 
-  <button class="secondary-btn" id="voiceChatButton">
-    OPEN TEXT CHAT
-  </button>
-</section>
-
-<!-- IMAGE STUDIO -->
-<section class="mode" id="imageMode">
-  <div class="welcome">
-    <div class="orb">✧</div>
-    <h1>IMAGE STUDIO</h1>
-    <p class="subtitle">
-      Select an image and prepare your creative editing instructions.
-    </p>
+  <div class="voice-style">
+   VOICE STYLE: Deep • Calm • Intelligent • Cinematic
   </div>
 
-  <div class="panel">
-    <div class="panel-title">YOUR IMAGE WORKSPACE</div>
-    <p class="muted">Choose a picture from your device.</p>
-
-    <input type="file" id="imageInput" accept="image/*">
-
-    <button class="primary-btn" id="chooseImage">
-      ＋ SELECT IMAGE
-    </button>
-
-    <img id="studioPreview" class="preview" alt="Selected image">
-
-    <p id="studioFileName"></p>
-
-    <textarea id="editPrompt" class="studio-input"
-      placeholder="Describe the changes you want, e.g. cinematic lighting, background improvements..."></textarea>
-
-    <button class="secondary-btn" id="sendEditPrompt">
-      SEND INSTRUCTIONS TO CHAT
-    </button>
-
-    <p class="muted" style="margin-top:14px">
-      Note: This module currently selects and previews images.
-      Actual AI image editing will be integrated separately.
-    </p>
+  <div class="controls">
+   <button class="play" onclick="playSample()">▶ PLAY JARVIS SAMPLE</button>
+   <button class="stop" onclick="stopJarvis()">■</button>
   </div>
-</section>
 
+  <div class="statusbar">
+   <span id="listening">▥ Listening...</span>
+   <span id="speaking">▥ Speaking...</span>
+   <span id="ready" class="active-status">🟢 Ready</span>
+  </div>
+ </section>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-mode="chatMode">
-    <span>◉</span>
-    AI CHAT
-  </button>
-  <button class="nav-btn" data-mode="jarvisMode">
-    <span>🎙</span>
-    JARVIS
-  </button>
-  <button class="nav-btn" data-mode="imageMode">
-    <span>▧</span>
-    IMAGE STUDIO
-  </button>
-</nav>
+<section id="jarvis" class="page panel content">
+ <h2>🎙 JARVIS VOICE CONTROL</h2>
+ <p>Speak to your personal AI assistant.</p>
+ <button class="action" onclick="startListening()">🎙 START LISTENING</button>
+ <button class="action" onclick="stopJarvis()">■ STOP</button>
+ <p id="voiceResult">Waiting for your voice command...</p>
+</section>
 
-</div>
+<section id="chat" class="page panel content">
+ <h2>CANON JR AI — CHAT</h2>
+ <div id="chatOutput" class="chat-output">
+ Welcome to Canon Jr AI. How can I help you?
+ </div>
+ <textarea id="chatInput" rows="3" placeholder="Message Canon Jr AI..."></textarea>
+ <button class="action" onclick="sendMessage()">SEND MESSAGE ➤</button>
+</section>
+
+<section id="studio" class="page panel content">
+ <h2>IMAGE STUDIO</h2>
+ <p>Upload and preview your images.</p>
+ <input type="file" id="imageInput" accept="image/*">
+ <img id="preview" class="preview" hidden>
+ <br>
+ <button class="action" onclick="downloadImage()">DOWNLOAD IMAGE</button>
+</section>
+
+<section id="settings" class="page panel content">
+ <h2>⚙ SYSTEM SETTINGS</h2>
+ <p>CANON JR AI PERSONALIZATION</p>
+ <label>Assistant name</label>
+ <input id="assistantName" value="Canon">
+ <button class="action" onclick="saveSettings()">SAVE SETTINGS</button>
+ <p id="settingsStatus"></p>
+</section>
+
+<footer>
+ CANON JR AI © 2026 | PERSONAL INTELLIGENCE SYSTEM
+</footer>
 
 <script>
-const chat = document.getElementById("chat");
-const welcome = document.getElementById("welcome");
-const input = document.getElementById("messageInput");
-const form = document.getElementById("chatForm");
-const statusText = document.getElementById("status");
-const sendBtn = document.getElementById("sendBtn");
+const $=id=>document.getElementById(id);
 
-let history = [];
-let jarvisMode = false;
-let recognition = null;
-let listening = false;
-let selectedImage = null;
-
-function switchMode(mode) {
-  document.querySelectorAll(".mode").forEach(section => {
-    section.classList.remove("active");
-  });
-
-  document.getElementById(mode).classList.add("active");
-
-  document.querySelectorAll(".nav-btn").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.mode === mode
-    );
-  });
-
-  if (mode !== "jarvisMode") stopVoice();
+function showPage(page,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+ $(page).classList.add('show');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ if(btn)btn.classList.add('active');
 }
 
-document.querySelectorAll(".nav-btn").forEach(button => {
-  button.addEventListener("click", () => {
-    switchMode(button.dataset.mode);
+function makeWaves(){
+ const box=$('waves');
+ for(let i=0;i<65;i++){
+  const bar=document.createElement('i');
+  bar.style.setProperty('--h',(8+Math.random()*65)+'px');
+  bar.style.setProperty('--d',(Math.random()*.8)+'s');
+  box.appendChild(bar);
+ }
+}
+makeWaves();
+
+function status(mode){
+ $('listening').style.color=mode==='listening'?'#8cff42':'#ffe58a';
+ $('speaking').style.color=mode==='speaking'?'#8cff42':'#ffe58a';
+ $('ready').style.color=mode==='ready'?'#8cff42':'#ffe58a';
+ $('orb').style.animationDuration=mode==='ready'?'2s':'.6s';
+ $('waves').style.opacity=mode==='ready'?'.35':'1';
+}
+
+function speak(text){
+ if(!('speechSynthesis' in window)){
+  $('response').textContent=text;
+  return;
+ }
+ speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.lang='en-GB';
+ utterance.rate=.88;
+ utterance.pitch=.85;
+ utterance.volume=1;
+ utterance.onstart=()=>status('speaking');
+ utterance.onend=()=>status('ready');
+ utterance.onerror=()=>status('ready');
+ $('response').textContent=text;
+ speechSynthesis.speak(utterance);
+}
+
+function playSample(){
+ speak("Good evening, Canon. I am Jarvis, your personal intelligence assistant. All systems are online and ready. How may I assist you today?");
+}
+
+function stopJarvis(){
+ if(recognition){
+  try{recognition.stop()}catch(e){}
+ }
+ if('speechSynthesis' in window)speechSynthesis.cancel();
+ status('ready');
+}
+
+let recognition=null;
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+function startListening(){
+ if(!SpeechRecognition){
+  $('voiceResult').textContent='Voice recognition is not supported by this browser. Try Chrome.';
+  return;
+ }
+ try{
+  recognition=new SpeechRecognition();
+  recognition.lang='en-GB';
+  recognition.interimResults=false;
+  recognition.onstart=()=>{
+   status('listening');
+   $('voiceResult').textContent='Listening... Speak now.';
+  };
+  recognition.onresult=async(event)=>{
+   const text=event.results[0][0].transcript;
+   $('voiceResult').textContent='You said: '+text;
+   $('response').textContent='Processing your request...';
+   await askAI(text);
+  };
+  recognition.onerror=(event)=>{
+   $('voiceResult').textContent='Voice error: '+event.error;
+   status('ready');
+  };
+  recognition.onend=()=>status('ready');
+  recognition.start();
+ }catch(e){
+  $('voiceResult').textContent='Please allow microphone access and try again.';
+  status('ready');
+ }
+}
+
+async function askAI(message){
+ try{
+  const res=await fetch('/api/chat',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    messages:[{role:'user',content:message}]
+   })
   });
+  if(!res.ok)throw new Error('Server response '+res.status);
+  const data=await res.json();
+  const answer=data.reply||data.message||data.response||
+   data.content||'I received your request.';
+  speak(answer);
+ }catch(error){
+  speak('Your request was received, but the AI server is not available right now. Please check your connection.');
+  console.error(error);
+ }
+}
+
+async function sendMessage(){
+ const input=$('chatInput');
+ const message=input.value.trim();
+ if(!message)return;
+ input.value='';
+ const output=$('chatOutput');
+ output.textContent+='\\n\\nYOU: '+message+'\\n\\nCANON JR AI: Thinking...';
+ try{
+  const res=await fetch('/api/chat',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    messages:[{role:'user',content:message}]
+   })
+  });
+  if(!res.ok)throw new Error('Server error '+res.status);
+  const data=await res.json();
+  const answer=data.reply||data.message||data.response||data.content||'No response received.';
+  output.textContent+='\\n'+answer;
+ }catch(error){
+  output.textContent+='\\nAI server unavailable. Check your backend connection.';
+  console.error(error);
+ }
+ output.scrollTop=output.scrollHeight;
+}
+
+$('imageInput').addEventListener('change',function(){
+ const file=this.files[0];
+ if(!file)return;
+ const url=URL.createObjectURL(file);
+ $('preview').src=url;
+ $('preview').hidden=false;
 });
 
-function addMessage(text, role) {
-  welcome.style.display = "none";
-
-  const row = document.createElement("div");
-  row.className = "message " + role;
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = role === "user" ? "YOU" : "C";
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-
-  const content = document.createElement("div");
-  content.textContent = text;
-  bubble.appendChild(content);
-
-  if (role === "bot") {
-    const tools = document.createElement("div");
-    tools.className = "message-tools";
-
-    const speak = document.createElement("button");
-    speak.textContent = "🔊 Read aloud";
-    speak.onclick = () => speakText(text);
-
-    tools.appendChild(speak);
-    bubble.appendChild(tools);
-  }
-
-  row.append(avatar, bubble);
-  chat.appendChild(row);
-  window.scrollTo(0, document.body.scrollHeight);
+function downloadImage(){
+ const img=$('preview');
+ if(!img.src||img.hidden){
+  alert('Please upload an image first.');
+  return;
+ }
+ const a=document.createElement('a');
+ a.href=img.src;
+ a.download='Canon-Jr-AI-Image.png';
+ a.click();
 }
 
-function speakText(text) {
-  if (!("speechSynthesis" in window)) {
-    statusText.textContent = "Speech unavailable.";
-    return;
-  }
-
-  speechSynthesis.cancel();
-
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = "en-US";
-  speech.rate = 0.95;
-
-  speech.onstart = () => {
-    statusText.textContent = "CANON AI • SPEAKING";
-    document.getElementById("voiceStatus").textContent =
-      "Canon AI is speaking.";
-  };
-
-  speech.onend = () => {
-    statusText.textContent = "CANON JR AI • READY";
-    document.getElementById("voiceStatus").textContent =
-      "Ready to listen.";
-  };
-
-  speechSynthesis.speak(speech);
+function saveSettings(){
+ const name=$('assistantName').value.trim()||'Canon';
+ localStorage.setItem('canonAssistantName',name);
+ $('greeting').textContent='Hello, '+name+'.';
+ $('settingsStatus').textContent='Settings saved successfully.';
 }
 
-async function sendMessage(question) {
-  if (!question.trim()) return;
-
-  addMessage(question, "user");
-
-  history.push({role:"user",content:question});
-
-  sendBtn.disabled = true;
-  statusText.textContent = "CANON AI IS THINKING...";
-
-  try {
-    const response = await fetch("/api/chat", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({messages:history})
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "AI connection failed");
-    }
-
-    const answer = data.reply || "No response received.";
-
-    history.push({role:"assistant",content:answer});
-    addMessage(answer,"bot");
-
-    statusText.textContent = "CANON JR AI • ONLINE";
-
-    if (jarvisMode) speakText(answer);
-
-  } catch(error) {
-    history.pop();
-    addMessage("Connection problem: " + error.message,"bot");
-    statusText.textContent = "CONNECTION PROBLEM";
-  } finally {
-    sendBtn.disabled = false;
-  }
+const savedName=localStorage.getItem('canonAssistantName');
+if(savedName){
+ $('assistantName').value=savedName;
+ $('greeting').textContent='Hello, '+savedName+'.';
 }
 
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const question = input.value.trim();
-  if (!question) return;
-
-  input.value = "";
-  await sendMessage(question);
-});
-
-document.querySelectorAll(".shortcut").forEach(button => {
-  button.onclick = () => {
-    input.value = button.dataset.prompt;
-    input.focus();
-  };
-});
-
-document.getElementById("newChat").onclick = () => {
-  chat.innerHTML = "";
-  history = [];
-  welcome.style.display = "block";
-  statusText.textContent = "NEW CHAT • READY";
-};
-
-document.getElementById("voiceChatButton").onclick = () => {
-  switchMode("chatMode");
-};
-
-document.getElementById("chatMic").onclick = () => {
-  switchMode("jarvisMode");
-  startVoice();
-};
-
-// VOICE RECOGNITION
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = "en-US";
-
-  recognition.onstart = () => {
-    listening = true;
-    document.getElementById("jarvisOrb").classList.add("listening");
-    document.getElementById("voiceStatus").textContent =
-      "Listening... Speak now.";
-  };
-
-  recognition.onresult = async event => {
-    const transcript = event.results[0][0].transcript;
-
-    document.getElementById("voiceTranscript").textContent = transcript;
-    document.getElementById("voiceStatus").textContent =
-      "Processing your message...";
-
-    jarvisMode = true;
-    await sendMessage(transcript);
-  };
-
-  recognition.onerror = () => {
-    document.getElementById("voiceStatus").textContent =
-      "Microphone error. Check browser permission.";
-  };
-
-  recognition.onend = () => {
-    listening = false;
-    document.getElementById("jarvisOrb").classList.remove("listening");
-  };
-}
-
-function startVoice() {
-  if (!recognition) {
-    document.getElementById("voiceStatus").textContent =
-      "Voice recognition is not supported in this browser.";
-    return;
-  }
-
-  if (listening) return;
-
-  try {
-    jarvisMode = true;
-    recognition.start();
-  } catch(error) {
-    document.getElementById("voiceStatus").textContent =
-      "Please try again.";
-  }
-}
-
-function stopVoice() {
-  if (recognition && listening) recognition.stop();
-  jarvisMode = false;
-}
-
-document.getElementById("startListening").onclick = startVoice;
-document.getElementById("stopListening").onclick = stopVoice;
-
-// IMAGE STUDIO
-const imageInput = document.getElementById("imageInput");
-const studioPreview = document.getElementById("studioPreview");
-
-document.getElementById("chooseImage").onclick = () => {
-  imageInput.click();
-};
-
-imageInput.onchange = () => {
-  const file = imageInput.files[0];
-  if (!file) return;
-
-  if (!file.type.startsWith("image/")) {
-    document.getElementById("studioFileName").textContent =
-      "Please choose a valid image.";
-    return;
-  }
-
-  selectedImage = file;
-
-  if (studioPreview.dataset.url) {
-    URL.revokeObjectURL(studioPreview.dataset.url);
-  }
-
-  const url = URL.createObjectURL(file);
-  studioPreview.src = url;
-  studioPreview.dataset.url = url;
-  studioPreview.style.display = "block";
-
-  document.getElementById("studioFileName").textContent =
-    "Selected: " + file.name;
-};
-
-document.getElementById("sendEditPrompt").onclick = () => {
-  const prompt = document.getElementById("editPrompt").value.trim();
-
-  if (!selectedImage) {
-    document.getElementById("studioFileName").textContent =
-      "Please select an image first.";
-    return;
-  }
-
-  if (!prompt) {
-    document.getElementById("studioFileName").textContent =
-      "Please describe the changes you want.";
-    return;
-  }
-
-  switchMode("chatMode");
-
-  input.value =
-    "I selected an image named " + selectedImage.name +
-    ". My requested editing instructions are: " + prompt +
-    ". Please help me plan these edits. Note: the image itself has not been uploaded to the AI.";
-
-  input.focus();
-};
-
-// PWA
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
-}
 </script>
-
 </body>
-  </html>
+</html>
