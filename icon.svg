@@ -1,6 +1,94 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="110" fill="#080d1b"/>
-<circle cx="256" cy="256" r="180" fill="#123c62"/>
-<text x="256" y="290" font-size="150" text-anchor="middle" font-family="Arial" font-weight="bold" fill="#65caff">CJ</text>
-<text x="256" y="365" font-size="35" text-anchor="middle" fill="white">AI</text>
+  <defs>
+    <radialGradient id="background">
+      <stop stop-color="#142c43"/>
+      <stop offset="1" stop-color="#02040a"/>
+    </radialGradient>
+    <linearGradient id="gold" x2="1" y2="1">
+      <stop stop-color="#fff2a8"/>
+      <stop offset=".5" stop-color="#d49a27"/>
+      <stop offset="1" stop-color="#70400a"/>
+    </linearGradient>
+    <radialGradient id="energy">
+      <stop stop-color="white"/>
+      <stop offset=".25" stop-color="#a9faff"/>
+      <stop offset=".65" stop-color="#16bfff"/>
+      <stop offset="1" stop-color="#07518e"/>
+    </radialGradient>
+    <filter id="blueGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="55" fill="#02050b"/>
+
+  <circle cx="256" cy="205" r="166" fill="url(#background)"/>
+
+  <!-- Gold reactor rings -->
+  <g fill="none" stroke="url(#gold)">
+    <circle cx="256" cy="205" r="145" stroke-width="8"/>
+    <circle cx="256" cy="205" r="130" stroke-width="3"/>
+    <circle cx="256" cy="205" r="115" stroke-width="7"/>
+  </g>
+
+  <!-- Glowing blue energy rings -->
+  <g fill="none" stroke="#23cfff" filter="url(#blueGlow)">
+    <circle cx="256" cy="205" r="100" stroke-width="5"/>
+    <circle cx="256" cy="205" r="82" stroke-width="3"/>
+  </g>
+
+  <!-- Reactor mechanical details -->
+  <g stroke="url(#gold)" stroke-width="9">
+    <path d="M256 45 V91"/>
+    <path d="M256 319 V365"/>
+    <path d="M96 205 H142"/>
+    <path d="M370 205 H416"/>
+    <path d="M143 92 L177 126"/>
+    <path d="M335 284 L369 318"/>
+    <path d="M369 92 L335 126"/>
+    <path d="M177 284 L143 318"/>
+  </g>
+
+  <!-- Central AI energy core -->
+  <circle cx="256" cy="205" r="66"
+          fill="#063b60" stroke="#43dfff"
+          stroke-width="6" filter="url(#blueGlow)"/>
+
+  <circle cx="256" cy="205" r="47"
+          fill="url(#energy)" filter="url(#blueGlow)"/>
+
+  <circle cx="256" cy="205" r="20" fill="white"/>
+
+  <path d="M256 155 L269 192 L306 205
+           L269 218 L256 255 L243 218
+           L206 205 L243 192 Z"
+        fill="#e9ffff"/>
+
+  <!-- Gold crown -->
+  <path d="M224 38 L208 12 L241 25
+           L256 5 L271 25 L304 12
+           L288 55 L224 55 Z"
+        fill="url(#gold)" stroke="#ffe69a" stroke-width="2"/>
+
+  <!-- Brand name -->
+  <text x="256" y="423"
+        text-anchor="middle"
+        font-family="Arial,sans-serif"
+        font-size="37"
+        font-weight="bold"
+        letter-spacing="1"
+        fill="#f1f5ff">CANON JR</text>
+
+  <text x="256" y="465"
+        text-anchor="middle"
+        font-family="Arial,sans-serif"
+        font-size="34"
+        font-weight="bold"
+        letter-spacing="9"
+        fill="#e7ad38">AI</text>
 </svg>
