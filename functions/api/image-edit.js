@@ -9,9 +9,10 @@ export async function onRequestPost({ request, env }) {
     });
 
   try {
-    if (!env.OPENAI_API_KEY) {
+    // Require the existing Cloudflare AI binding.
+    if (!env.AI) {
       return json({
-        error: "Image editing is not configured. Add OPENAI_API_KEY in Cloudflare."
+        error: "Cloudflare AI is not configured."
       }, 503);
     }
 
@@ -20,64 +21,76 @@ export async function onRequestPost({ request, env }) {
     const prompt = String(form.get("prompt") || "").trim();
 
     if (!image || typeof image === "string") {
-      return json({ error: "Please upload an image." }, 400);
+      return json({
+        error: "Please upload an image."
+      }, 400);
     }
 
     if (!prompt) {
-      return json({ error: "Please describe the edit you want." }, 400);
+      return json({
+        error: "Please describe the edit you want."
+      }, 400);
     }
 
     if (!["image/png", "image/jpeg", "image/webp"].includes(image.type)) {
-      return json({ error: "Use a PNG, JPEG, or WEBP image." }, 415);
+      return json({
+        error: "Use a PNG, JPEG, or WEBP image."
+      }, 415);
     }
 
     if (image.size > 15 * 1024 * 1024) {
-      return json({ error: "Image is too large. Maximum size is 15 MB." }, 413);
+      return json({
+        error: "Image is too large. Maximum size is 15 MB."
+      }, 413);
     }
 
-    const upstreamForm = new FormData();
-    upstreamForm.append("model", "gpt-image-2");
-    upstreamForm.append("image", image, image.name || "upload.png");
-    upstreamForm.append("prompt", prompt);
-    upstreamForm.append("size", "auto");
-    upstreamForm.append("quality", "medium");
+    // Prepare the image and prompt for FLUX.
+    const fluxForm = new FormData();
 
-    const response = await fetch(
-      "https://api.openai.com/v1/images/edits",
+    fluxForm.append("prompt", prompt);
+    fluxForm.append(
+      "input_image_0",
+      image,
+      image.name || "upload.png"
+    );
+
+    const wrapped = new Response(fluxForm);
+
+    // Use Cloudflare Workers AI only.
+    // There is deliberately no paid-provider fallback.
+    const result = await env.AI.run(
+      "@cf/black-forest-labs/flux-2-klein-4b",
       {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${env.OPENAI_API_KEY}`
-        },
-        body: upstreamForm
+        multipart: {
+          body: wrapped.body,
+          contentType: wrapped.headers.get("content-type")
+        }
       }
     );
 
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
+    if (!result || !result.image) {
       return json({
-        error: data?.error?.message ||
-          "The image provider could not complete the edit."
-      }, response.status === 429 ? 429 : 502);
-    }
-
-    const editedImage = data?.data?.[0]?.b64_json;
-
-    if (!editedImage) {
-      return json({
-        error: "The image provider returned no edited image."
+        error: "FLUX did not return an edited image."
       }, 502);
     }
 
     return json({
-      image: editedImage,
+      image: result.image,
       format: "png"
     });
 
   } catch (error) {
+    const message = String(error?.message || "");
+
+    if (/3036|429|daily free allocation|account limited/i.test(message)) {
+      return json({
+        error: "The free daily AI allowance may be exhausted. Please try again after it resets."
+      }, 429);
+    }
+
     return json({
-      error: "Image editing failed. Please try again."
-    }, 500);
+      error: "Image editing failed. Please try again later."
+    }, 502);
   }
 }
+
