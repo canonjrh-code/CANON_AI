@@ -1,11 +1,16 @@
+
 {
-  "name": "Canon Jr AI",
-  "short_name": "Canon AI",
+  "id": "./",
+  "name": "CANON JR AI",
+  "short_name": "CANON AI",
+  "description": "Your Personal Gold Jarvis Intelligence System",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#080d1b",
-  "theme_color": "#080d1b",
-  "description": "Your personal AI assistant",
+  "orientation": "portrait",
+  "background_color": "#080603",
+  "theme_color": "#080603",
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "./icon.svg",
