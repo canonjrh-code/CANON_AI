@@ -62,11 +62,7 @@ header{
  letter-spacing:2px;
 }
 .brand p{margin:7px 0;color:#f5d66e;letter-spacing:1px}
-.ready{
- color:var(--green);
- font-weight:bold;
- white-space:nowrap;
-}
+.ready{color:var(--green);font-weight:bold;white-space:nowrap}
 .dot{
  display:inline-block;width:13px;height:13px;
  border-radius:50%;background:var(--green);
@@ -112,8 +108,7 @@ main{
  width:75%;height:75%;
  border-radius:50%;
  border:2px solid var(--gold);
- background:
- radial-gradient(circle at 35% 30%,#ffe58a,#d88a08 18%,#5b3000 55%,#090603 75%);
+ background:radial-gradient(circle at 35% 30%,#ffe58a,#d88a08 18%,#5b3000 55%,#090603 75%);
  box-shadow:0 0 35px #ffb30090,inset 0 0 35px #ffdc5d;
  position:relative;
  overflow:hidden;
@@ -138,10 +133,7 @@ main{
 .orbit.two{transform:rotate(65deg);animation-direction:reverse}
 .orbit.three{transform:rotate(0deg);width:120%;height:65%}
 @keyframes rotate{to{rotate:360deg}}
-@keyframes glow{
- from{filter:brightness(.8)}
- to{filter:brightness(1.3)}
-}
+@keyframes glow{from{filter:brightness(.8)}to{filter:brightness(1.3)}}
 .hello{
  color:var(--gold);
  font-size:clamp(30px,5vw,48px);
@@ -175,9 +167,7 @@ main{
  font-size:45px;color:var(--gold);
  box-shadow:0 0 20px #ffbd2630;
 }
-.voice-head h2{
- color:var(--gold2);font-size:30px;margin:0 0 6px;
-}
+.voice-head h2{color:var(--gold2);font-size:30px;margin:0 0 6px}
 .voice-head p{margin:0;font-size:19px}
 .voice-stage{
  min-height:285px;
@@ -191,21 +181,17 @@ main{
  display:flex;align-items:center;
  justify-content:space-around;
  width:100%;height:100px;
- gap:4px;
- opacity:.85;
+ gap:4px;opacity:.85;
 }
 .waves i{
- width:3px;
- height:var(--h);
+ width:3px;height:var(--h);
  background:var(--gold);
  box-shadow:0 0 8px var(--gold);
  border-radius:5px;
  animation:wave .8s ease-in-out infinite alternate;
  animation-delay:var(--d);
 }
-@keyframes wave{
- to{transform:scaleY(.3)}
-}
+@keyframes wave{to{transform:scaleY(.3)}}
 .mic-orb{
  width:205px;height:205px;
  border:4px solid var(--gold);
@@ -231,10 +217,7 @@ main{
  background:#100c07;
 }
 .sound-icon{font-size:35px;color:var(--gold)}
-.voice-style{
- text-align:center;color:var(--gold);
- font-size:19px;margin:17px 0;
-}
+.voice-style{text-align:center;color:var(--gold);font-size:19px;margin:17px 0}
 .controls{
  display:flex;justify-content:center;
  align-items:center;gap:22px;flex-wrap:wrap;
@@ -245,16 +228,13 @@ main{
  border-radius:50px;
  padding:20px 35px;
  color:#140d00;
- font-size:20px;
- font-weight:bold;
+ font-size:20px;font-weight:bold;
  box-shadow:0 0 20px #ffbd2670;
 }
 .stop{
  width:80px;height:80px;border-radius:50%;
- background:#090603;
- color:var(--gold);
- border:2px solid var(--gold);
- font-size:28px;
+ background:#090603;color:var(--gold);
+ border:2px solid var(--gold);font-size:28px;
 }
 .statusbar{
  margin-top:22px;
@@ -269,9 +249,7 @@ main{
 .statusbar .active-status{color:var(--green)}
 .page{display:none}
 .page.show{display:block}
-.content{
- padding:25px;
-}
+.content{padding:25px}
 .content h2{color:var(--gold2)}
 .content input,.content textarea{
  width:100%;padding:14px;
@@ -295,10 +273,92 @@ main{
  width:100%;max-height:350px;
  object-fit:contain;margin-top:15px;
 }
-footer{
- text-align:center;padding:20px;
- color:#aa8c4c;font-size:13px;
+footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
+
+/* IMAGE STUDIO UPGRADE */
+.studio-intro{color:var(--muted);line-height:1.6}
+.studio-card{
+ border:1px solid #76551c;
+ background:linear-gradient(145deg,#171006,#080603);
+ border-radius:20px;
+ padding:18px;
+ margin:18px 0;
 }
+.studio-card h3{color:var(--gold2);margin-top:0}
+.upload-zone{
+ display:block;
+ border:2px dashed var(--gold);
+ border-radius:17px;
+ padding:30px 15px;
+ text-align:center;
+ background:#100c07;
+ cursor:pointer;
+ transition:.2s;
+}
+.upload-zone:hover{background:#211506;box-shadow:0 0 18px #ffbd2630}
+.upload-zone .upload-icon{font-size:42px;display:block;margin-bottom:10px}
+.upload-zone strong{color:var(--gold2);font-size:18px}
+.upload-zone small{display:block;color:var(--muted);margin-top:8px}
+.studio-file{display:none}
+.studio-preview{
+ width:100%;
+ max-height:360px;
+ object-fit:contain;
+ border-radius:14px;
+ margin-top:15px;
+ background:#050403;
+}
+.studio-prompt{
+ width:100%;
+ min-height:110px;
+ resize:vertical;
+ padding:15px;
+ color:white;
+ background:#080603;
+ border:1px solid var(--gold);
+ border-radius:13px;
+ outline:none;
+ margin:10px 0;
+}
+.studio-prompt:focus{box-shadow:0 0 12px #ffbd2650}
+.studio-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.studio-actions button{flex:1;min-width:140px}
+.studio-secondary{
+ background:#100c07;
+ border:1px solid var(--gold);
+ color:var(--gold2);
+ padding:13px 20px;
+ border-radius:12px;
+}
+.studio-status{
+ color:var(--gold2);
+ padding:12px;
+ text-align:center;
+ min-height:25px;
+}
+.studio-status.error{color:#ff7777}
+.studio-status.success{color:var(--green)}
+.studio-loading{
+ display:none;
+ text-align:center;
+ padding:20px;
+ color:var(--gold2);
+}
+.studio-loading.show{display:block}
+.loader{
+ width:42px;height:42px;
+ border:4px solid #554018;
+ border-top:4px solid var(--gold);
+ border-radius:50%;
+ margin:0 auto 12px;
+ animation:studioSpin 1s linear infinite;
+}
+@keyframes studioSpin{to{transform:rotate(360deg)}}
+.studio-result{display:none}
+.studio-result.show{display:block}
+.studio-result h3{color:var(--green)}
+.studio-note{font-size:13px;color:var(--muted);line-height:1.5}
+
 @media(max-width:950px){
  header{flex-wrap:wrap}
  nav{width:100%;overflow-x:auto}
@@ -318,6 +378,7 @@ footer{
  .mic-orb span{font-size:65px}
  .message{font-size:15px;padding:13px}
  .play{font-size:15px;padding:17px 22px}
+ .content{padding:16px}
 }
 </style>
 </head>
@@ -334,7 +395,6 @@ footer{
  </div>
 
  <div class="ready"><span class="dot"></span>SYSTEM READY</div>
-
  <nav>
   <button class="active" onclick="showPage('home',this)">⌂<br>Home</button>
   <button onclick="showPage('chat',this)">▢<br>Chat</button>
@@ -355,7 +415,6 @@ footer{
 
   <h1 class="hello" id="greeting">Hello, Canon.</h1>
   <p class="left-sub">Your assistant is ready.</p>
-
   <div class="power">
    <div>
     <strong>⚡ Canon Jr AI</strong><br>
@@ -376,9 +435,7 @@ footer{
 
   <div class="voice-stage">
    <div class="waves" id="waves"></div>
-   <div class="mic-orb" id="orb">
-    <span>🎙</span>
-   </div>
+   <div class="mic-orb" id="orb"><span>🎙</span></div>
   </div>
 
   <div class="message">
@@ -423,13 +480,73 @@ footer{
  <button class="action" onclick="sendMessage()">SEND MESSAGE ➤</button>
 </section>
 
+<!-- UPDATED IMAGE STUDIO -->
 <section id="studio" class="page panel content">
- <h2>IMAGE STUDIO</h2>
- <p>Upload and preview your images.</p>
- <input type="file" id="imageInput" accept="image/*">
- <img id="preview" class="preview" hidden>
- <br>
- <button class="action" onclick="downloadImage()">DOWNLOAD IMAGE</button>
+ <h2>✦ CANON JR AI — IMAGE STUDIO</h2>
+ <p class="studio-intro">
+ Upload your photo, describe the changes you want, and send your request to the image-editing service.
+ </p>
+
+ <div class="studio-card">
+  <h3>01 — Upload Your Image</h3>
+
+  <label class="upload-zone" for="imageInput">
+   <span class="upload-icon">📸</span>
+   <strong>Choose an image</strong>
+   <small>Tap here to select a photo from your device</small>
+  </label>
+
+  <input class="studio-file" type="file" id="imageInput" accept="image/*">
+
+  <p id="selectedFile" class="studio-note">No image selected yet.</p>
+
+  <img id="preview" class="studio-preview" hidden alt="Original uploaded image">
+ </div>
+
+ <div class="studio-card">
+  <h3>02 — Describe Your Edit</h3>
+  <p class="studio-note">
+   Explain what you want changed in your photo. For example: background, lighting, colours, or visual style.
+  </p>
+
+  <textarea
+   id="imagePrompt"
+   class="studio-prompt"
+   placeholder="Describe how you want your image edited..."
+  ></textarea>
+
+  <div class="studio-actions">
+   <button class="action" id="generateImageBtn" onclick="generateEditedImage()">
+    ✨ GENERATE EDIT
+   </button>
+   <button class="studio-secondary" onclick="clearStudio()">
+    CLEAR
+   </button>
+  </div>
+
+  <div id="studioStatus" class="studio-status" aria-live="polite"></div>
+
+  <div id="studioLoading" class="studio-loading">
+   <div class="loader"></div>
+   <strong>CANON JR AI IS PROCESSING...</strong>
+   <p>Please wait while your image is being edited.</p>
+  </div>
+ </div>
+
+ <div id="studioResult" class="studio-card studio-result">
+  <h3>03 — Your Edited Image</h3>
+  <img id="resultPreview" class="studio-preview" alt="Edited image result">
+
+  <div class="studio-actions">
+   <button class="action" onclick="downloadImage()">
+    ⬇ DOWNLOAD EDITED IMAGE
+   </button>
+  </div>
+ </div>
+
+ <p class="studio-note">
+  Image editing requires a working image-editing backend connected to this website.
+ </p>
 </section>
 
 <section id="settings" class="page panel content">
@@ -516,20 +633,24 @@ function startListening(){
   recognition=new SpeechRecognition();
   recognition.lang='en-GB';
   recognition.interimResults=false;
+
   recognition.onstart=()=>{
    status('listening');
    $('voiceResult').textContent='Listening... Speak now.';
   };
+
   recognition.onresult=async(event)=>{
    const text=event.results[0][0].transcript;
    $('voiceResult').textContent='You said: '+text;
    $('response').textContent='Processing your request...';
    await askAI(text);
   };
+
   recognition.onerror=(event)=>{
    $('voiceResult').textContent='Voice error: '+event.error;
    status('ready');
   };
+
   recognition.onend=()=>status('ready');
   recognition.start();
  }catch(e){
@@ -547,10 +668,13 @@ async function askAI(message){
     messages:[{role:'user',content:message}]
    })
   });
+
   if(!res.ok)throw new Error('Server response '+res.status);
+
   const data=await res.json();
   const answer=data.reply||data.message||data.response||
    data.content||'I received your request.';
+
   speak(answer);
  }catch(error){
   speak('Your request was received, but the AI server is not available right now. Please check your connection.');
@@ -562,9 +686,11 @@ async function sendMessage(){
  const input=$('chatInput');
  const message=input.value.trim();
  if(!message)return;
+
  input.value='';
  const output=$('chatOutput');
- output.textContent+='\\n\\nYOU: '+message+'\\n\\nCANON JR AI: Thinking...';
+ output.textContent+='\n\nYOU: '+message+'\n\nCANON JR AI: Thinking...';
+
  try{
   const res=await fetch('/api/chat',{
    method:'POST',
@@ -573,36 +699,207 @@ async function sendMessage(){
     messages:[{role:'user',content:message}]
    })
   });
+
   if(!res.ok)throw new Error('Server error '+res.status);
+
   const data=await res.json();
   const answer=data.reply||data.message||data.response||data.content||'No response received.';
-  output.textContent+='\\n'+answer;
+  output.textContent+='\n'+answer;
  }catch(error){
-  output.textContent+='\\nAI server unavailable. Check your backend connection.';
+  output.textContent+='\nAI server unavailable. Check your backend connection.';
   console.error(error);
  }
+
  output.scrollTop=output.scrollHeight;
 }
+
+/* IMAGE STUDIO FUNCTIONS */
+
+let selectedImageFile=null;
+let editedImageUrl=null;
+let originalImageUrl=null;
 
 $('imageInput').addEventListener('change',function(){
  const file=this.files[0];
  if(!file)return;
- const url=URL.createObjectURL(file);
- $('preview').src=url;
- $('preview').hidden=false;
-});
 
-function downloadImage(){
- const img=$('preview');
- if(!img.src||img.hidden){
-  alert('Please upload an image first.');
+ if(!file.type.startsWith('image/')){
+  setStudioStatus('Please select a valid image file.','error');
   return;
  }
- const a=document.createElement('a');
- a.href=img.src;
- a.download='Canon-Jr-AI-Image.png';
- a.click();
+
+ if(file.size>15*1024*1024){
+  setStudioStatus('Image is too large. Please choose an image under 15 MB.','error');
+  this.value='';
+  return;
+ }
+
+ selectedImageFile=file;
+
+ if(originalImageUrl){
+  URL.revokeObjectURL(originalImageUrl);
+ }
+
+ originalImageUrl=URL.createObjectURL(file);
+
+ $('preview').src=originalImageUrl;
+ $('preview').hidden=false;
+ $('selectedFile').textContent='Selected: '+file.name;
+
+ $('studioResult').classList.remove('show');
+
+ if(editedImageUrl){
+  URL.revokeObjectURL(editedImageUrl);
+  editedImageUrl=null;
+ }
+
+ setStudioStatus('Image uploaded successfully. Describe your edit below.','success');
+});
+
+function setStudioStatus(message,type=''){
+ const statusBox=$('studioStatus');
+ statusBox.textContent=message;
+ statusBox.className='studio-status '+type;
 }
+
+async function generateEditedImage(){
+ const prompt=$('imagePrompt').value.trim();
+
+ if(!selectedImageFile){
+  setStudioStatus('Please upload an image first.','error');
+  return;
+ }
+
+ if(!prompt){
+  setStudioStatus('Please describe the changes you want.','error');
+  $('imagePrompt').focus();
+  return;
+ }
+
+ const button=$('generateImageBtn');
+ const loading=$('studioLoading');
+
+ button.disabled=true;
+ button.textContent='PROCESSING...';
+ loading.classList.add('show');
+ $('studioResult').classList.remove('show');
+
+ setStudioStatus('Sending your image to the editing service...');
+
+ try{
+  const formData=new FormData();
+
+  formData.append('image',selectedImageFile);
+  formData.append('prompt',prompt);
+
+  const response=await fetch('/api/image-edit',{
+   method:'POST',
+   body:formData
+  });
+
+  if(!response.ok){
+   let message='Image editing service returned an error ('+response.status+').';
+
+   try{
+    const errorData=await response.json();
+    message=errorData.error||errorData.message||message;
+   }catch(e){}
+
+   throw new Error(message);
+  }
+
+  const contentType=response.headers.get('content-type')||'';
+
+  if(contentType.includes('application/json')){
+   const data=await response.json();
+
+   const imageValue=data.imageUrl||data.image||data.result||data.url;
+
+   if(!imageValue){
+    throw new Error('The server did not return an edited image.');
+   }
+
+   if(imageValue.startsWith('data:image/')){
+    editedImageUrl=imageValue;
+   }else{
+    editedImageUrl=imageValue;
+   }
+  }else if(contentType.startsWith('image/')){
+   const imageBlob=await response.blob();
+
+   if(editedImageUrl && editedImageUrl.startsWith('blob:')){
+    URL.revokeObjectURL(editedImageUrl);
+   }
+
+   editedImageUrl=URL.createObjectURL(imageBlob);
+  }else{
+   throw new Error('The server returned an unsupported image format.');
+  }
+
+  $('resultPreview').src=editedImageUrl;
+  $('studioResult').classList.add('show');
+
+  setStudioStatus('Your edited image is ready!','success');
+
+ }catch(error){
+  console.error('Image Studio error:',error);
+
+  setStudioStatus(
+   error.message==='Failed to fetch'
+    ?'Cannot reach the image-editing service. Check your backend connection and endpoint.'
+    :error.message,
+   'error'
+  );
+ }finally{
+  loading.classList.remove('show');
+  button.disabled=false;
+  button.textContent='✨ GENERATE EDIT';
+ }
+}
+
+function downloadImage(){
+ if(!editedImageUrl){
+  setStudioStatus('There is no edited image to download yet.','error');
+  return;
+ }
+
+ const link=document.createElement('a');
+ link.href=editedImageUrl;
+ link.download='CANON-JR-AI-Edited-Image.png';
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+}
+
+function clearStudio(){
+ $('imageInput').value='';
+ $('imagePrompt').value='';
+ $('preview').hidden=true;
+ $('preview').removeAttribute('src');
+ $('resultPreview').removeAttribute('src');
+ $('studioResult').classList.remove('show');
+ $('studioLoading').classList.remove('show');
+ $('selectedFile').textContent='No image selected yet.';
+
+ if(originalImageUrl){
+  URL.revokeObjectURL(originalImageUrl);
+  originalImageUrl=null;
+ }
+
+ if(editedImageUrl && editedImageUrl.startsWith('blob:')){
+  URL.revokeObjectURL(editedImageUrl);
+ }
+
+ selectedImageFile=null;
+ editedImageUrl=null;
+
+ $('generateImageBtn').disabled=false;
+ $('generateImageBtn').textContent='✨ GENERATE EDIT';
+
+ setStudioStatus('Image Studio cleared.');
+}
+
+/* SETTINGS */
 
 function saveSettings(){
  const name=$('assistantName').value.trim()||'Canon';
@@ -612,11 +909,12 @@ function saveSettings(){
 }
 
 const savedName=localStorage.getItem('canonAssistantName');
+
 if(savedName){
  $('assistantName').value=savedName;
  $('greeting').textContent='Hello, '+savedName+'.';
 }
-
 </script>
+
 </body>
 </html>
