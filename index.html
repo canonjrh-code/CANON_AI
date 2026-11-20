@@ -1,10 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080603">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>CANON JR AI | Gold Jarvis Edition</title>
 
 <style>
@@ -24,7 +26,7 @@ body{
  font-family:Arial,sans-serif;
  min-height:100vh;
 }
-button,input,textarea{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 header{
  margin:18px;
@@ -251,11 +253,18 @@ main{
 .page.show{display:block}
 .content{padding:25px}
 .content h2{color:var(--gold2)}
+.content label{color:var(--muted)}
 .content input,.content textarea{
  width:100%;padding:14px;
  background:#080603;color:white;
  border:1px solid var(--gold);
  border-radius:12px;margin:10px 0;
+}
+.content select{
+ width:100%;padding:14px;
+ background:#080603;color:white;
+ border:1px solid var(--gold);
+ border-radius:12px;margin:10px 0 16px;
 }
 .action{
  background:linear-gradient(120deg,#ffe28b,#d18b00);
@@ -263,19 +272,39 @@ main{
  border-radius:12px;font-weight:bold;
  color:#160d00;
 }
+.action:disabled{opacity:.55;cursor:not-allowed}
 .chat-output{
  min-height:200px;
+ max-height:55vh;
+ overflow-y:auto;
  border:1px solid #73521c;
  border-radius:15px;padding:15px;
  margin:15px 0;white-space:pre-wrap;
 }
+.chat-msg{
+ margin:0 0 14px;
+ padding:10px 14px;
+ border-radius:14px;
+ line-height:1.5;
+}
+.chat-msg small{
+ display:block;
+ color:var(--muted);
+ letter-spacing:1px;
+ margin-bottom:4px;
+}
+.chat-msg.user{background:#211506;border:1px solid #4b3512;color:var(--gold2)}
+.chat-msg.ai{background:#100c07;border:1px solid #73521c}
+.chat-msg.pending{opacity:.6;font-style:italic}
+.chat-msg.error{border-color:#ff7777;color:#ff9a9a}
+.jarvis-reply{color:var(--gold2);line-height:1.6;white-space:pre-wrap}
 .preview{
  width:100%;max-height:350px;
  object-fit:contain;margin-top:15px;
 }
 footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
 
-/* IMAGE STUDIO UPGRADE */
+/* IMAGE STUDIO */
 .studio-intro{color:var(--muted);line-height:1.6}
 .studio-card{
  border:1px solid #76551c;
@@ -382,7 +411,6 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -441,7 +469,7 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
   <div class="message">
    <span class="sound-icon">▥</span>
    <div id="response">
-    Good evening, Canon. All systems are standing by.
+    Hello, Canon. All systems are standing by.
     Your personal assistant is ready. How may I assist you today?
    </div>
   </div>
@@ -466,21 +494,29 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
 <section id="jarvis" class="page panel content">
  <h2>🎙 JARVIS VOICE CONTROL</h2>
  <p>Speak to your personal AI assistant.</p>
+
+ <label for="langSelect">Voice language / Lugha ya sauti</label>
+ <select id="langSelect" onchange="setLanguage(this.value)">
+  <option value="en">English</option>
+  <option value="sw">Kiswahili</option>
+ </select>
+
  <button class="action" onclick="startListening()">🎙 START LISTENING</button>
  <button class="action" onclick="stopJarvis()">■ STOP</button>
  <p id="voiceResult">Waiting for your voice command...</p>
+ <p id="jarvisReply" class="jarvis-reply"></p>
 </section>
 
 <section id="chat" class="page panel content">
  <h2>CANON JR AI — CHAT</h2>
- <div id="chatOutput" class="chat-output">
- Welcome to Canon Jr AI. How can I help you?
- </div>
+ <div id="chatOutput" class="chat-output"></div>
  <textarea id="chatInput" rows="3" placeholder="Message Canon Jr AI..."></textarea>
- <button class="action" onclick="sendMessage()">SEND MESSAGE ➤</button>
+ <div class="studio-actions">
+  <button class="action" id="sendBtn" onclick="sendMessage()">SEND MESSAGE ➤</button>
+  <button class="studio-secondary" onclick="clearChat()">NEW CHAT</button>
+ </div>
 </section>
 
-<!-- UPDATED IMAGE STUDIO -->
 <section id="studio" class="page panel content">
  <h2>✦ CANON JR AI — IMAGE STUDIO</h2>
  <p class="studio-intro">
@@ -552,8 +588,16 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
 <section id="settings" class="page panel content">
  <h2>⚙ SYSTEM SETTINGS</h2>
  <p>CANON JR AI PERSONALIZATION</p>
- <label>Assistant name</label>
+
+ <label for="assistantName">Your name (how Jarvis greets you)</label>
  <input id="assistantName" value="Canon">
+
+ <label for="settingsLang">Language / Lugha</label>
+ <select id="settingsLang" onchange="setLanguage(this.value)">
+  <option value="en">English</option>
+  <option value="sw">Kiswahili</option>
+ </select>
+
  <button class="action" onclick="saveSettings()">SAVE SETTINGS</button>
  <p id="settingsStatus"></p>
 </section>
@@ -565,6 +609,148 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
 <script>
 const $=id=>document.getElementById(id);
 
+/* ---------- SAFE STORAGE (localStorage can throw in private mode) ---------- */
+const store={
+ get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+ set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+/* ---------- LANGUAGE: ENGLISH + KISWAHILI ---------- */
+const STRINGS={
+ en:{
+  speechLang:'en-GB',
+  welcome:'Welcome to Canon Jr AI. How can I help you?',
+  greetMorning:'Good morning',
+  greetAfternoon:'Good afternoon',
+  greetEvening:'Good evening',
+  hello:n=>'Hello, '+n+'.',
+  homeIntro:(g,n)=>g+', '+n+'. All systems are standing by. Your personal assistant is ready. How may I assist you today?',
+  sample:(g,n)=>g+', '+n+'. I am Jarvis, your personal intelligence assistant. All systems are online and ready. How may I assist you today?',
+  you:'YOU',
+  ai:'CANON JR AI',
+  thinking:'Thinking...',
+  waiting:'Waiting for your voice command...',
+  listening:'Listening... Speak now.',
+  youSaid:'You said: ',
+  processing:'Processing your request...',
+  voiceUnsupported:'Voice recognition is not supported by this browser. Try Chrome.',
+  voiceError:'Voice error: ',
+  micDenied:'Please allow microphone access and try again.',
+  noSpeechHeard:'I did not hear anything. Please try again.',
+  serverDown:'Your request was received, but the AI server is not available right now. Please check your connection.',
+  chatDown:'AI server unavailable. Check your backend connection.',
+  settingsSaved:'Settings saved successfully.',
+  noneSelected:'No image selected yet.',
+  selected:'Selected: ',
+  badFile:'Please select a valid image file.',
+  tooBig:'Image is too large. Please choose an image under 15 MB.',
+  uploaded:'Image uploaded successfully. Describe your edit below.',
+  needImage:'Please upload an image first.',
+  needPrompt:'Please describe the changes you want.',
+  sending:'Sending your image to the editing service...',
+  imgReady:'Your edited image is ready!',
+  processingBtn:'PROCESSING...',
+  generateBtn:'✨ GENERATE EDIT',
+  cleared:'Image Studio cleared.',
+  noDownload:'There is no edited image to download yet.',
+  imgNotSetUp:'The image-editing service is not set up on this site yet (the /api/image-edit endpoint was not found).',
+  imgTooLarge:'The image is too large for the server. Try a smaller image.',
+  imgRateLimit:'Too many requests. Please wait a moment and try again.',
+  imgServerError:'The image-editing service had a problem. Please try again in a moment.',
+  imgGenericError:'The image-editing service returned an error',
+  imgNetwork:'Cannot reach the image-editing service. Check your internet connection and the backend endpoint.',
+  imgTimeout:'The editing service took too long to respond. Please try again.',
+  imgNoResult:'The server did not return an edited image.',
+  imgBadFormat:'The server returned an unsupported image format.'
+ },
+ sw:{
+  speechLang:'sw-TZ',
+  welcome:'Karibu Canon Jr AI. Nikusaidie vipi?',
+  greetMorning:'Habari za asubuhi',
+  greetAfternoon:'Habari za mchana',
+  greetEvening:'Habari za jioni',
+  hello:n=>'Habari, '+n+'.',
+  homeIntro:(g,n)=>g+', '+n+'. Mifumo yote iko tayari. Msaidizi wako binafsi yuko tayari. Nikusaidie vipi leo?',
+  sample:(g,n)=>g+', '+n+'. Mimi ni Jarvis, msaidizi wako wa akili bandia. Mifumo yote iko tayari. Nikusaidie vipi leo?',
+  you:'WEWE',
+  ai:'CANON JR AI',
+  thinking:'Inafikiri...',
+  waiting:'Nasubiri amri yako ya sauti...',
+  listening:'Nasikiliza... Ongea sasa.',
+  youSaid:'Umesema: ',
+  processing:'Nashughulikia ombi lako...',
+  voiceUnsupported:'Kivinjari hiki hakitumii utambuzi wa sauti. Jaribu Chrome.',
+  voiceError:'Hitilafu ya sauti: ',
+  micDenied:'Tafadhali ruhusu matumizi ya maikrofoni kisha ujaribu tena.',
+  noSpeechHeard:'Sikusikia chochote. Tafadhali jaribu tena.',
+  serverDown:'Ombi lako limepokelewa, lakini seva ya AI haipatikani kwa sasa. Tafadhali angalia mtandao wako.',
+  chatDown:'Seva ya AI haipatikani. Angalia muunganisho wa seva yako.',
+  settingsSaved:'Mipangilio imehifadhiwa.',
+  noneSelected:'Bado hujachagua picha.',
+  selected:'Imechaguliwa: ',
+  badFile:'Tafadhali chagua faili sahihi ya picha.',
+  tooBig:'Picha ni kubwa mno. Tafadhali chagua picha chini ya MB 15.',
+  uploaded:'Picha imepakiwa. Eleza mabadiliko unayotaka hapa chini.',
+  needImage:'Tafadhali pakia picha kwanza.',
+  needPrompt:'Tafadhali eleza mabadiliko unayotaka.',
+  sending:'Inatuma picha kwenye huduma ya kuhariri...',
+  imgReady:'Picha yako iliyohaririwa iko tayari!',
+  processingBtn:'INASHUGHULIKA...',
+  generateBtn:'✨ HARIRI PICHA',
+  cleared:'Studio imesafishwa.',
+  noDownload:'Bado hakuna picha iliyohaririwa ya kupakua.',
+  imgNotSetUp:'Huduma ya kuhariri picha haijawekwa kwenye tovuti hii bado (/api/image-edit haikupatikana).',
+  imgTooLarge:'Picha ni kubwa mno kwa seva. Jaribu picha ndogo zaidi.',
+  imgRateLimit:'Maombi ni mengi mno. Tafadhali subiri kidogo kisha ujaribu tena.',
+  imgServerError:'Huduma ya kuhariri picha ina tatizo. Tafadhali jaribu tena baada ya muda mfupi.',
+  imgGenericError:'Huduma ya kuhariri picha imerudisha hitilafu',
+  imgNetwork:'Huduma ya kuhariri picha haipatikani. Angalia mtandao wako na anwani ya seva.',
+  imgTimeout:'Huduma ya kuhariri imechukua muda mrefu kujibu. Tafadhali jaribu tena.',
+  imgNoResult:'Seva haikurudisha picha iliyohaririwa.',
+  imgBadFormat:'Seva imerudisha aina ya picha isiyotumika.'
+ }
+};
+
+/* ---------- STATE ---------- */
+let lang=store.get('canonLang')==='sw'?'sw':'en';
+let chatHistory=[];          // [{role:'user'|'assistant',content:'...'}] - gives the AI memory
+const MAX_HISTORY=12;        // matches what the backend keeps
+let busy=false;              // an AI request is in flight
+let introShown=true;         // Home panel still shows the greeting (not an AI reply)
+let recognition=null;
+let listeningNow=false;
+let selectedImageFile=null;
+let editedImageUrl=null;
+let originalImageUrl=null;
+let imgBusy=false;
+
+const S=()=>STRINGS[lang];
+const userName=()=>store.get('canonAssistantName')||'Canon';
+function timeGreeting(){
+ const h=new Date().getHours();
+ return h<12?S().greetMorning:h<17?S().greetAfternoon:S().greetEvening;
+}
+
+function setLanguage(code){
+ lang=code==='sw'?'sw':'en';
+ store.set('canonLang',lang);
+ applyLanguage();
+}
+
+function applyLanguage(){
+ const s=S();
+ document.documentElement.lang=lang;
+ $('langSelect').value=lang;
+ $('settingsLang').value=lang;
+ $('greeting').textContent=s.hello(userName());
+ if(introShown)$('response').textContent=s.homeIntro(timeGreeting(),userName());
+ if(!listeningNow)$('voiceResult').textContent=s.waiting;
+ $('selectedFile').textContent=selectedImageFile?s.selected+selectedImageFile.name:s.noneSelected;
+ if(!imgBusy)$('generateImageBtn').textContent=s.generateBtn;
+ if(chatHistory.length===0)renderWelcome();
+}
+
+/* ---------- NAVIGATION ---------- */
 function showPage(page,btn){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
  $(page).classList.add('show');
@@ -572,6 +758,7 @@ function showPage(page,btn){
  if(btn)btn.classList.add('active');
 }
 
+/* ---------- WAVES + STATUS ---------- */
 function makeWaves(){
  const box=$('waves');
  for(let i=0;i<65;i++){
@@ -591,26 +778,41 @@ function status(mode){
  $('waves').style.opacity=mode==='ready'?'.35':'1';
 }
 
+/* ---------- VOICE OUTPUT ---------- */
+function pickVoice(langCode){
+ if(!('speechSynthesis' in window))return null;
+ const voices=speechSynthesis.getVoices()||[];
+ const full=langCode.toLowerCase();
+ const prefix=full.slice(0,2);
+ return voices.find(v=>v.lang.toLowerCase().replace('_','-')===full)
+  ||voices.find(v=>v.lang.toLowerCase().startsWith(prefix))
+  ||null;
+}
+
 function speak(text){
- if(!('speechSynthesis' in window)){
-  $('response').textContent=text;
-  return;
- }
+ introShown=false;
+ $('response').textContent=text;
+ $('jarvisReply').textContent=text;
+
+ if(!('speechSynthesis' in window))return;
+
  speechSynthesis.cancel();
- const utterance=new SpeechSynthesisUtterance(text);
- utterance.lang='en-GB';
+ const clean=text.replace(/[*_`#>]/g,'').replace(/\s+/g,' ').trim();
+ const utterance=new SpeechSynthesisUtterance(clean);
+ utterance.lang=S().speechLang;
+ const voice=pickVoice(S().speechLang);
+ if(voice)utterance.voice=voice;
  utterance.rate=.88;
  utterance.pitch=.85;
  utterance.volume=1;
  utterance.onstart=()=>status('speaking');
  utterance.onend=()=>status('ready');
  utterance.onerror=()=>status('ready');
- $('response').textContent=text;
  speechSynthesis.speak(utterance);
 }
 
 function playSample(){
- speak("Good evening, Canon. I am Jarvis, your personal intelligence assistant. All systems are online and ready. How may I assist you today?");
+ speak(S().sample(timeGreeting(),userName()));
 }
 
 function stopJarvis(){
@@ -621,157 +823,225 @@ function stopJarvis(){
  status('ready');
 }
 
-let recognition=null;
+/* ---------- VOICE INPUT ---------- */
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 function startListening(){
  if(!SpeechRecognition){
-  $('voiceResult').textContent='Voice recognition is not supported by this browser. Try Chrome.';
+  $('voiceResult').textContent=S().voiceUnsupported;
   return;
  }
  try{
+  if(recognition){
+   try{recognition.abort()}catch(e){}
+  }
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+
   recognition=new SpeechRecognition();
-  recognition.lang='en-GB';
+  recognition.lang=S().speechLang;
   recognition.interimResults=false;
+  recognition.maxAlternatives=1;
 
   recognition.onstart=()=>{
+   listeningNow=true;
    status('listening');
-   $('voiceResult').textContent='Listening... Speak now.';
+   $('voiceResult').textContent=S().listening;
   };
 
   recognition.onresult=async(event)=>{
    const text=event.results[0][0].transcript;
-   $('voiceResult').textContent='You said: '+text;
-   $('response').textContent='Processing your request...';
-   await askAI(text);
+   $('voiceResult').textContent=S().youSaid+text;
+   $('response').textContent=S().processing;
+   introShown=false;
+   await ask(text,true);
   };
 
   recognition.onerror=(event)=>{
-   $('voiceResult').textContent='Voice error: '+event.error;
+   listeningNow=false;
+   if(event.error==='not-allowed'||event.error==='service-not-allowed'){
+    $('voiceResult').textContent=S().micDenied;
+   }else if(event.error==='no-speech'){
+    $('voiceResult').textContent=S().noSpeechHeard;
+   }else{
+    $('voiceResult').textContent=S().voiceError+event.error;
+   }
    status('ready');
   };
 
-  recognition.onend=()=>status('ready');
+  recognition.onend=()=>{
+   listeningNow=false;
+   status('ready');
+  };
+
   recognition.start();
  }catch(e){
-  $('voiceResult').textContent='Please allow microphone access and try again.';
+  listeningNow=false;
+  $('voiceResult').textContent=S().micDenied;
   status('ready');
  }
 }
 
-async function askAI(message){
+/* ---------- AI CHAT (shared by typing and voice, with memory) ---------- */
+async function callAI(userText){
+ const payload=chatHistory.concat({role:'user',content:userText}).slice(-MAX_HISTORY);
+ while(payload.length>1&&payload[0].role!=='user')payload.shift();
+
+ // Ask the AI to answer in the chosen language (only in the outgoing copy)
+ if(lang==='sw'){
+  const last=payload.length-1;
+  payload[last]={role:'user',content:userText+'\n\n(Tafadhali jibu kwa Kiswahili.)'};
+ }
+
+ const res=await fetch('/api/chat',{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({messages:payload,language:lang})
+ });
+
+ if(!res.ok){
+  let detail='';
+  try{
+   const errorData=await res.json();
+   detail=errorData.error||errorData.message||'';
+  }catch(e){}
+  throw new Error(detail||('Server error '+res.status));
+ }
+
+ const data=await res.json();
+ const answer=String(data.reply||data.message||data.response||data.content||'').trim();
+ if(!answer)throw new Error('Empty reply');
+
+ chatHistory.push({role:'user',content:userText},{role:'assistant',content:answer});
+ if(chatHistory.length>MAX_HISTORY)chatHistory=chatHistory.slice(-MAX_HISTORY);
+ return answer;
+}
+
+function addMsg(who,text,extraClass){
+ const box=$('chatOutput');
+ const msg=document.createElement('div');
+ msg.className='chat-msg '+who+(extraClass?' '+extraClass:'');
+ const label=document.createElement('small');
+ label.textContent=who==='user'?S().you:S().ai;
+ const body=document.createElement('div');
+ body.textContent=text;
+ msg.append(label,body);
+ box.appendChild(msg);
+ box.scrollTop=box.scrollHeight;
+ return msg;
+}
+
+function setMsg(msg,text,extraClass){
+ msg.classList.remove('pending');
+ if(extraClass)msg.classList.add(extraClass);
+ msg.lastChild.textContent=text;
+ const box=$('chatOutput');
+ box.scrollTop=box.scrollHeight;
+}
+
+function renderWelcome(){
+ $('chatOutput').textContent='';
+ addMsg('ai',S().welcome);
+}
+
+function setBusy(state){
+ busy=state;
+ $('sendBtn').disabled=state;
+}
+
+async function ask(text,fromVoice){
+ if(busy)return;
+ setBusy(true);
+ addMsg('user',text);
+ const pending=addMsg('ai',S().thinking,'pending');
+
  try{
-  const res=await fetch('/api/chat',{
-   method:'POST',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({
-    messages:[{role:'user',content:message}]
-   })
-  });
-
-  if(!res.ok)throw new Error('Server response '+res.status);
-
-  const data=await res.json();
-  const answer=data.reply||data.message||data.response||
-   data.content||'I received your request.';
-
-  speak(answer);
+  const answer=await callAI(text);
+  setMsg(pending,answer);
+  if(fromVoice)speak(answer);
  }catch(error){
-  speak('Your request was received, but the AI server is not available right now. Please check your connection.');
   console.error(error);
+  setMsg(pending,fromVoice?S().serverDown:S().chatDown,'error');
+  if(fromVoice)speak(S().serverDown);
+ }finally{
+  setBusy(false);
  }
 }
 
 async function sendMessage(){
  const input=$('chatInput');
  const message=input.value.trim();
- if(!message)return;
-
+ if(!message||busy)return;
  input.value='';
- const output=$('chatOutput');
- output.textContent+='\n\nYOU: '+message+'\n\nCANON JR AI: Thinking...';
-
- try{
-  const res=await fetch('/api/chat',{
-   method:'POST',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({
-    messages:[{role:'user',content:message}]
-   })
-  });
-
-  if(!res.ok)throw new Error('Server error '+res.status);
-
-  const data=await res.json();
-  const answer=data.reply||data.message||data.response||data.content||'No response received.';
-  output.textContent+='\n'+answer;
- }catch(error){
-  output.textContent+='\nAI server unavailable. Check your backend connection.';
-  console.error(error);
- }
-
- output.scrollTop=output.scrollHeight;
+ await ask(message,false);
 }
 
-/* IMAGE STUDIO FUNCTIONS */
+function clearChat(){
+ chatHistory=[];
+ renderWelcome();
+}
 
-let selectedImageFile=null;
-let editedImageUrl=null;
-let originalImageUrl=null;
-
-$('imageInput').addEventListener('change',function(){
- const file=this.files[0];
- if(!file)return;
-
- if(!file.type.startsWith('image/')){
-  setStudioStatus('Please select a valid image file.','error');
-  return;
- }
-
- if(file.size>15*1024*1024){
-  setStudioStatus('Image is too large. Please choose an image under 15 MB.','error');
-  this.value='';
-  return;
- }
-
- selectedImageFile=file;
-
- if(originalImageUrl){
-  URL.revokeObjectURL(originalImageUrl);
- }
-
- originalImageUrl=URL.createObjectURL(file);
-
- $('preview').src=originalImageUrl;
- $('preview').hidden=false;
- $('selectedFile').textContent='Selected: '+file.name;
-
- $('studioResult').classList.remove('show');
-
- if(editedImageUrl){
-  URL.revokeObjectURL(editedImageUrl);
-  editedImageUrl=null;
- }
-
- setStudioStatus('Image uploaded successfully. Describe your edit below.','success');
-});
-
+/* ---------- IMAGE STUDIO ---------- */
 function setStudioStatus(message,type=''){
  const statusBox=$('studioStatus');
  statusBox.textContent=message;
  statusBox.className='studio-status '+type;
 }
 
+function revokeBlob(url){
+ if(url&&url.startsWith('blob:'))URL.revokeObjectURL(url);
+}
+
+$('imageInput').addEventListener('change',function(){
+ const file=this.files[0];
+ if(!file)return;
+
+ if(!file.type.startsWith('image/')){
+  setStudioStatus(S().badFile,'error');
+  return;
+ }
+
+ if(file.size>15*1024*1024){
+  setStudioStatus(S().tooBig,'error');
+  this.value='';
+  return;
+ }
+
+ selectedImageFile=file;
+
+ revokeBlob(originalImageUrl);
+ originalImageUrl=URL.createObjectURL(file);
+
+ $('preview').src=originalImageUrl;
+ $('preview').hidden=false;
+ $('selectedFile').textContent=S().selected+file.name;
+
+ $('studioResult').classList.remove('show');
+ revokeBlob(editedImageUrl);
+ editedImageUrl=null;
+
+ setStudioStatus(S().uploaded,'success');
+});
+
+function imageErrorMessage(statusCode,serverMessage){
+ const s=S();
+ if(statusCode===404||statusCode===405)return s.imgNotSetUp;
+ if(serverMessage)return serverMessage;
+ if(statusCode===413)return s.imgTooLarge;
+ if(statusCode===429)return s.imgRateLimit;
+ if(statusCode>=500)return s.imgServerError;
+ return s.imgGenericError+' ('+statusCode+').';
+}
+
 async function generateEditedImage(){
  const prompt=$('imagePrompt').value.trim();
 
  if(!selectedImageFile){
-  setStudioStatus('Please upload an image first.','error');
+  setStudioStatus(S().needImage,'error');
   return;
  }
 
  if(!prompt){
-  setStudioStatus('Please describe the changes you want.','error');
+  setStudioStatus(S().needPrompt,'error');
   $('imagePrompt').focus();
   return;
  }
@@ -779,87 +1049,78 @@ async function generateEditedImage(){
  const button=$('generateImageBtn');
  const loading=$('studioLoading');
 
+ imgBusy=true;
  button.disabled=true;
- button.textContent='PROCESSING...';
+ button.textContent=S().processingBtn;
  loading.classList.add('show');
  $('studioResult').classList.remove('show');
+ setStudioStatus(S().sending);
 
- setStudioStatus('Sending your image to the editing service...');
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),90000);
 
  try{
   const formData=new FormData();
-
   formData.append('image',selectedImageFile);
   formData.append('prompt',prompt);
 
   const response=await fetch('/api/image-edit',{
    method:'POST',
-   body:formData
+   body:formData,
+   signal:controller.signal
   });
 
   if(!response.ok){
-   let message='Image editing service returned an error ('+response.status+').';
-
+   let serverMessage='';
    try{
     const errorData=await response.json();
-    message=errorData.error||errorData.message||message;
+    serverMessage=errorData.error||errorData.message||'';
    }catch(e){}
-
-   throw new Error(message);
+   throw new Error(imageErrorMessage(response.status,serverMessage));
   }
 
   const contentType=response.headers.get('content-type')||'';
+  let newUrl=null;
 
   if(contentType.includes('application/json')){
    const data=await response.json();
-
-   const imageValue=data.imageUrl||data.image||data.result||data.url;
-
-   if(!imageValue){
-    throw new Error('The server did not return an edited image.');
+   let value=data.imageUrl||data.image||data.result||data.url;
+   if(!value)throw new Error(S().imgNoResult);
+   value=String(value);
+   if(!/^(data:|https?:|blob:|\/)/.test(value)){
+    value='data:image/png;base64,'+value;   // raw base64 from the server
    }
-
-   if(imageValue.startsWith('data:image/')){
-    editedImageUrl=imageValue;
-   }else{
-    editedImageUrl=imageValue;
-   }
+   newUrl=value;
   }else if(contentType.startsWith('image/')){
-   const imageBlob=await response.blob();
-
-   if(editedImageUrl && editedImageUrl.startsWith('blob:')){
-    URL.revokeObjectURL(editedImageUrl);
-   }
-
-   editedImageUrl=URL.createObjectURL(imageBlob);
+   newUrl=URL.createObjectURL(await response.blob());
   }else{
-   throw new Error('The server returned an unsupported image format.');
+   throw new Error(S().imgBadFormat);
   }
 
+  revokeBlob(editedImageUrl);
+  editedImageUrl=newUrl;
   $('resultPreview').src=editedImageUrl;
   $('studioResult').classList.add('show');
-
-  setStudioStatus('Your edited image is ready!','success');
+  setStudioStatus(S().imgReady,'success');
 
  }catch(error){
   console.error('Image Studio error:',error);
-
-  setStudioStatus(
-   error.message==='Failed to fetch'
-    ?'Cannot reach the image-editing service. Check your backend connection and endpoint.'
-    :error.message,
-   'error'
-  );
+  let message=error.message;
+  if(error.name==='AbortError')message=S().imgTimeout;
+  else if(message==='Failed to fetch'||error instanceof TypeError)message=S().imgNetwork;
+  setStudioStatus(message,'error');
  }finally{
+  clearTimeout(timer);
+  imgBusy=false;
   loading.classList.remove('show');
   button.disabled=false;
-  button.textContent='✨ GENERATE EDIT';
+  button.textContent=S().generateBtn;
  }
 }
 
 function downloadImage(){
  if(!editedImageUrl){
-  setStudioStatus('There is no edited image to download yet.','error');
+  setStudioStatus(S().noDownload,'error');
   return;
  }
 
@@ -879,40 +1140,46 @@ function clearStudio(){
  $('resultPreview').removeAttribute('src');
  $('studioResult').classList.remove('show');
  $('studioLoading').classList.remove('show');
- $('selectedFile').textContent='No image selected yet.';
 
- if(originalImageUrl){
-  URL.revokeObjectURL(originalImageUrl);
-  originalImageUrl=null;
- }
-
- if(editedImageUrl && editedImageUrl.startsWith('blob:')){
-  URL.revokeObjectURL(editedImageUrl);
- }
-
- selectedImageFile=null;
+ revokeBlob(originalImageUrl);
+ revokeBlob(editedImageUrl);
+ originalImageUrl=null;
  editedImageUrl=null;
+ selectedImageFile=null;
+ imgBusy=false;
 
+ $('selectedFile').textContent=S().noneSelected;
  $('generateImageBtn').disabled=false;
- $('generateImageBtn').textContent='✨ GENERATE EDIT';
+ $('generateImageBtn').textContent=S().generateBtn;
 
- setStudioStatus('Image Studio cleared.');
+ setStudioStatus(S().cleared);
 }
 
-/* SETTINGS */
-
+/* ---------- SETTINGS ---------- */
 function saveSettings(){
  const name=$('assistantName').value.trim()||'Canon';
- localStorage.setItem('canonAssistantName',name);
- $('greeting').textContent='Hello, '+name+'.';
- $('settingsStatus').textContent='Settings saved successfully.';
+ store.set('canonAssistantName',name);
+ store.set('canonLang',lang);
+ applyLanguage();
+ $('settingsStatus').textContent=S().settingsSaved;
 }
 
-const savedName=localStorage.getItem('canonAssistantName');
+/* ---------- START UP ---------- */
+const savedName=store.get('canonAssistantName');
+if(savedName)$('assistantName').value=savedName;
+applyLanguage();
 
-if(savedName){
- $('assistantName').value=savedName;
- $('greeting').textContent='Hello, '+savedName+'.';
+// Some browsers load speech voices late; ask once so they are ready for speak()
+if('speechSynthesis' in window){
+ try{speechSynthesis.getVoices()}catch(e){}
+}
+
+// Register ONE service worker so the app can install and work offline
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js')
+   .catch(err=>console.warn('Service worker registration failed:',err));
+ });
 }
 </script>
 
