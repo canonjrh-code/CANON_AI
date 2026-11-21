@@ -1,5 +1,5 @@
 
-const MODEL = "claude-sonnet-5-5";
+const MODEL = "@cf/ibm-granite/granite-4.0-h-micro";
 const MAX_HISTORY = 12;
 
 function json(data, status = 200) {
@@ -65,9 +65,9 @@ export async function onRequestPost({ request, env }) {
     }
   }
 
-  if (!env.ANTHROPIC_API_KEY) {
+  if (!env.AI) {
     return json({
-      error: "Missing ANTHROPIC_API_KEY in Cloudflare settings."
+      error: "Workers AI binding named AI is missing in Cloudflare settings."
     }, 500);
   }
 
@@ -79,6 +79,10 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "Invalid JSON request." }, 400);
   }
 
+  if (!body || typeof body !== "object") {
+    return json({ error: "Invalid request body." }, 400);
+  }
+
   const messages = cleanMessages(body.messages);
 
   if (!messages.length || messages[messages.length - 1].role !== "user") {
@@ -86,51 +90,37 @@ export async function onRequestPost({ request, env }) {
   }
 
   try {
-    const response = await fetch(
-      "https://api.anthropic.com/v1/messages",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": env.ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01"
+    const result = await env.AI.run(MODEL, {
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt(body)
         },
-        body: JSON.stringify({
-          model: env.ANTHROPIC_MODEL || MODEL,
-          max_tokens: body.mode === "voice" ? 400 : 800,
-          system: systemPrompt(body),
-          messages
-        })
-      }
-    );
+        ...messages
+      ],
+      max_tokens: body.mode === "voice" ? 400 : 800
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Anthropic API error:", response.status, data);
-
-      return json({
-        error: data.error?.message || "AI service request failed."
-      }, response.status === 429 ? 429 : 502);
-    }
-
-    const reply = (data.content || [])
-      .filter(item => item.type === "text")
-      .map(item => item.text)
-      .join("\n")
-      .trim();
+    const reply = String(
+      result?.response ||
+      result?.choices?.[0]?.message?.content ||
+      ""
+    ).trim();
 
     if (!reply) {
-      return json({ error: "The AI returned an empty reply." }, 502);
+      console.error("Workers AI returned no text:", result);
+      return json({
+        error: "The AI returned an empty reply."
+      }, 502);
     }
 
     return json({ reply });
 
   } catch (error) {
-    console.error("Canon AI backend error:", error);
+    console.error("Canon AI Workers AI error:", error);
 
     return json({
-      error: "Could not connect to the AI service."
+      error: "Could not connect to Cloudflare Workers AI. Please try again."
     }, 502);
   }
 }
