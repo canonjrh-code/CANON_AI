@@ -7,6 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Canon Jr AI">
 <title>CANON JR AI | Gold Jarvis Edition</title>
 
 <style>
@@ -251,6 +255,8 @@ main{
 .statusbar .active-status{color:var(--green)}
 .page{display:none}
 .page.show{display:block}
+main.page.show{display:grid}
+section.page{margin:22px}
 .content{padding:25px}
 .content h2{color:var(--gold2)}
 .content label{color:var(--muted)}
@@ -401,6 +407,9 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
  .brand p{font-size:10px}
  .ready{font-size:12px}
  main{margin:10px;gap:12px}
+ section.page{margin:10px}
+ nav{gap:4px}
+ nav button{min-width:0;padding:10px 2px;font-size:13px}
  .right,.left{padding:15px}
  .voice-head h2{font-size:21px}
  .mic-orb{width:160px;height:160px}
@@ -598,6 +607,10 @@ footer{text-align:center;padding:20px;color:#aa8c4c;font-size:13px}
   <option value="sw">Kiswahili</option>
  </select>
 
+ <label for="accessCode">Access code / Msimbo wa ufikiaji (optional)</label>
+ <input id="accessCode" type="password" autocomplete="off" placeholder="Only if your server uses an access code">
+ <p class="studio-note">Leave empty unless you set ACCESS_CODE on the server. / Acha wazi kama hujaweka ACCESS_CODE kwenye seva.</p>
+
  <button class="action" onclick="saveSettings()">SAVE SETTINGS</button>
  <p id="settingsStatus"></p>
 </section>
@@ -661,7 +674,11 @@ const STRINGS={
   imgNetwork:'Cannot reach the image-editing service. Check your internet connection and the backend endpoint.',
   imgTimeout:'The editing service took too long to respond. Please try again.',
   imgNoResult:'The server did not return an edited image.',
-  imgBadFormat:'The server returned an unsupported image format.'
+  imgBadFormat:'The server returned an unsupported image format.',
+  needCode:'This site is locked. Enter your access code in Settings and try again.',
+  chatNotSetUp:'The chat service is not set up on this site yet (the /api/chat endpoint was not found).',
+  imgPrepFail:'Could not read that image. Please try a different photo.',
+  preparing:'Preparing your photo...'
  },
  sw:{
   speechLang:'sw-TZ',
@@ -707,7 +724,11 @@ const STRINGS={
   imgNetwork:'Huduma ya kuhariri picha haipatikani. Angalia mtandao wako na anwani ya seva.',
   imgTimeout:'Huduma ya kuhariri imechukua muda mrefu kujibu. Tafadhali jaribu tena.',
   imgNoResult:'Seva haikurudisha picha iliyohaririwa.',
-  imgBadFormat:'Seva imerudisha aina ya picha isiyotumika.'
+  imgBadFormat:'Seva imerudisha aina ya picha isiyotumika.',
+  needCode:'Tovuti hii imefungwa. Weka msimbo wako wa ufikiaji kwenye Mipangilio kisha ujaribu tena.',
+  chatNotSetUp:'Huduma ya gumzo haijawekwa kwenye tovuti hii bado (/api/chat haikupatikana).',
+  imgPrepFail:'Imeshindikana kusoma picha hiyo. Tafadhali jaribu picha nyingine.',
+  preparing:'Inaandaa picha yako...'
  }
 };
 
@@ -754,6 +775,7 @@ function applyLanguage(){
 function showPage(page,btn){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
  $(page).classList.add('show');
+ window.scrollTo(0,0);
  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
  if(btn)btn.classList.add('active');
 }
@@ -770,7 +792,7 @@ function makeWaves(){
 }
 makeWaves();
 
-function status(mode){
+function setMode(mode){
  $('listening').style.color=mode==='listening'?'#8cff42':'#ffe58a';
  $('speaking').style.color=mode==='speaking'?'#8cff42':'#ffe58a';
  $('ready').style.color=mode==='ready'?'#8cff42':'#ffe58a';
@@ -779,6 +801,9 @@ function status(mode){
 }
 
 /* ---------- VOICE OUTPUT ---------- */
+let speakToken=0;            // lets old speech callbacks know they are out of date
+let speechUnlocked=false;
+
 function pickVoice(langCode){
  if(!('speechSynthesis' in window))return null;
  const voices=speechSynthesis.getVoices()||[];
@@ -787,6 +812,31 @@ function pickVoice(langCode){
  return voices.find(v=>v.lang.toLowerCase().replace('_','-')===full)
   ||voices.find(v=>v.lang.toLowerCase().startsWith(prefix))
   ||null;
+}
+
+// Phones only allow speech after a tap. Priming it on the first tap lets the
+// spoken reply (which arrives later, after the AI answers) actually play.
+function unlockSpeech(){
+ if(speechUnlocked||!('speechSynthesis' in window))return;
+ speechUnlocked=true;
+ try{
+  const u=new SpeechSynthesisUtterance(' ');
+  u.volume=0;
+  speechSynthesis.speak(u);
+ }catch(e){}
+}
+
+// Chrome can cut off long speech after ~15 seconds, so speak in short chunks.
+function splitForSpeech(text){
+ const parts=text.match(/[^.!?…\n]+[.!?…]*\s*/g)||[text];
+ const chunks=[];
+ let cur='';
+ for(const p of parts){
+  if(cur&&(cur+p).length>180){chunks.push(cur.trim());cur=p}
+  else cur+=p;
+ }
+ if(cur.trim())chunks.push(cur.trim());
+ return chunks;
 }
 
 function speak(text){
@@ -798,35 +848,46 @@ function speak(text){
 
  speechSynthesis.cancel();
  const clean=text.replace(/[*_`#>]/g,'').replace(/\s+/g,' ').trim();
- const utterance=new SpeechSynthesisUtterance(clean);
- utterance.lang=S().speechLang;
+ if(!clean)return;
+
  const voice=pickVoice(S().speechLang);
- if(voice)utterance.voice=voice;
- utterance.rate=.88;
- utterance.pitch=.85;
- utterance.volume=1;
- utterance.onstart=()=>status('speaking');
- utterance.onend=()=>status('ready');
- utterance.onerror=()=>status('ready');
- speechSynthesis.speak(utterance);
+ const chunks=splitForSpeech(clean);
+ const token=++speakToken;
+
+ chunks.forEach((chunk,i)=>{
+  const u=new SpeechSynthesisUtterance(chunk);
+  u.lang=S().speechLang;
+  if(voice)u.voice=voice;
+  u.rate=.88;
+  u.pitch=.85;
+  u.volume=1;
+  if(i===0)u.onstart=()=>{if(token===speakToken)setMode('speaking')};
+  if(i===chunks.length-1)u.onend=()=>{if(token===speakToken)setMode('ready')};
+  u.onerror=()=>{if(token===speakToken)setMode('ready')};
+  speechSynthesis.speak(u);
+ });
 }
 
 function playSample(){
+ unlockSpeech();
  speak(S().sample(timeGreeting(),userName()));
 }
 
 function stopJarvis(){
+ speakToken++;
  if(recognition){
-  try{recognition.stop()}catch(e){}
+  try{recognition.abort()}catch(e){}
  }
  if('speechSynthesis' in window)speechSynthesis.cancel();
- status('ready');
+ listeningNow=false;
+ setMode('ready');
 }
 
 /* ---------- VOICE INPUT ---------- */
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 function startListening(){
+ unlockSpeech();
  if(!SpeechRecognition){
   $('voiceResult').textContent=S().voiceUnsupported;
   return;
@@ -835,20 +896,22 @@ function startListening(){
   if(recognition){
    try{recognition.abort()}catch(e){}
   }
+  speakToken++;
   if('speechSynthesis' in window)speechSynthesis.cancel();
 
-  recognition=new SpeechRecognition();
-  recognition.lang=S().speechLang;
-  recognition.interimResults=false;
-  recognition.maxAlternatives=1;
+  const rec=new SpeechRecognition();
+  recognition=rec;
+  rec.lang=S().speechLang;
+  rec.interimResults=false;
+  rec.maxAlternatives=1;
 
-  recognition.onstart=()=>{
+  rec.onstart=()=>{
    listeningNow=true;
-   status('listening');
+   setMode('listening');
    $('voiceResult').textContent=S().listening;
   };
 
-  recognition.onresult=async(event)=>{
+  rec.onresult=async(event)=>{
    const text=event.results[0][0].transcript;
    $('voiceResult').textContent=S().youSaid+text;
    $('response').textContent=S().processing;
@@ -856,55 +919,81 @@ function startListening(){
    await ask(text,true);
   };
 
-  recognition.onerror=(event)=>{
+  rec.onerror=(event)=>{
+   if(recognition!==rec)return;
    listeningNow=false;
-   if(event.error==='not-allowed'||event.error==='service-not-allowed'){
+   if(event.error==='aborted'){
+    $('voiceResult').textContent=S().waiting;
+   }else if(event.error==='not-allowed'||event.error==='service-not-allowed'){
     $('voiceResult').textContent=S().micDenied;
    }else if(event.error==='no-speech'){
     $('voiceResult').textContent=S().noSpeechHeard;
    }else{
     $('voiceResult').textContent=S().voiceError+event.error;
    }
-   status('ready');
+   setMode('ready');
   };
 
-  recognition.onend=()=>{
+  rec.onend=()=>{
+   if(recognition!==rec)return;
    listeningNow=false;
-   status('ready');
+   setMode('ready');
   };
 
-  recognition.start();
+  rec.start();
  }catch(e){
   listeningNow=false;
   $('voiceResult').textContent=S().micDenied;
-  status('ready');
+  setMode('ready');
  }
 }
 
 /* ---------- AI CHAT (shared by typing and voice, with memory) ---------- */
-async function callAI(userText){
+function authHeaders(extra){
+ const headers=Object.assign({},extra||{});
+ const code=store.get('canonAccessCode');
+ if(code)headers['x-access-code']=code;
+ return headers;
+}
+
+async function readServerError(res){
+ try{
+  const d=await res.json();
+  return String(d.error||d.message||'');
+ }catch(e){
+  return '';
+ }
+}
+
+async function callAI(userText,fromVoice){
  const payload=chatHistory.concat({role:'user',content:userText}).slice(-MAX_HISTORY);
  while(payload.length>1&&payload[0].role!=='user')payload.shift();
 
- // Ask the AI to answer in the chosen language (only in the outgoing copy)
- if(lang==='sw'){
-  const last=payload.length-1;
-  payload[last]={role:'user',content:userText+'\n\n(Tafadhali jibu kwa Kiswahili.)'};
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),45000);
+ let res;
+ try{
+  res=await fetch('/api/chat',{
+   method:'POST',
+   headers:authHeaders({'Content-Type':'application/json'}),
+   body:JSON.stringify({
+    messages:payload,
+    language:lang,
+    name:userName(),
+    mode:fromVoice?'voice':'chat'
+   }),
+   signal:controller.signal
+  });
+ }finally{
+  clearTimeout(timer);
  }
 
- const res=await fetch('/api/chat',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({messages:payload,language:lang})
- });
-
  if(!res.ok){
-  let detail='';
-  try{
-   const errorData=await res.json();
-   detail=errorData.error||errorData.message||'';
-  }catch(e){}
-  throw new Error(detail||('Server error '+res.status));
+  const detail=await readServerError(res);
+  const err=new Error(detail||('Server error '+res.status));
+  err.status=res.status;
+  err.fromServer=!!detail;
+  throw err;
  }
 
  const data=await res.json();
@@ -914,6 +1003,14 @@ async function callAI(userText){
  chatHistory.push({role:'user',content:userText},{role:'assistant',content:answer});
  if(chatHistory.length>MAX_HISTORY)chatHistory=chatHistory.slice(-MAX_HISTORY);
  return answer;
+}
+
+function chatErrorText(error,fromVoice){
+ const s=S();
+ if(error.status===401)return s.needCode;
+ if(error.status===404||error.status===405)return s.chatNotSetUp;
+ if(error.fromServer)return error.message;
+ return fromVoice?s.serverDown:s.chatDown;
 }
 
 function addMsg(who,text,extraClass){
@@ -955,13 +1052,14 @@ async function ask(text,fromVoice){
  const pending=addMsg('ai',S().thinking,'pending');
 
  try{
-  const answer=await callAI(text);
+  const answer=await callAI(text,fromVoice);
   setMsg(pending,answer);
   if(fromVoice)speak(answer);
  }catch(error){
   console.error(error);
-  setMsg(pending,fromVoice?S().serverDown:S().chatDown,'error');
-  if(fromVoice)speak(S().serverDown);
+  const message=chatErrorText(error,fromVoice);
+  setMsg(pending,message,'error');
+  if(fromVoice)speak(message);
  }finally{
   setBusy(false);
  }
@@ -980,7 +1078,18 @@ function clearChat(){
  renderWelcome();
 }
 
+// Enter sends on a computer keyboard; on phones Enter stays a new line
+$('chatInput').addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&window.matchMedia('(pointer:fine)').matches){
+  e.preventDefault();
+  sendMessage();
+ }
+});
+
 /* ---------- IMAGE STUDIO ---------- */
+const MAX_SIDE=1536;         // photos are shrunk to this before upload (phone photos are huge)
+let editedExt='png';
+
 function setStudioStatus(message,type=''){
  const statusBox=$('studioStatus');
  statusBox.textContent=message;
@@ -1022,14 +1131,73 @@ $('imageInput').addEventListener('change',function(){
  setStudioStatus(S().uploaded,'success');
 });
 
+function fileToDataUrl(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=()=>resolve(reader.result);
+  reader.onerror=()=>reject(reader.error||new Error('read failed'));
+  reader.readAsDataURL(file);
+ });
+}
+
+async function loadBitmap(file){
+ if('createImageBitmap' in window){
+  try{return await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){}
+  try{return await createImageBitmap(file)}catch(e){}
+ }
+ const url=URL.createObjectURL(file);
+ try{
+  return await new Promise((resolve,reject)=>{
+   const img=new Image();
+   img.onload=()=>resolve(img);
+   img.onerror=()=>reject(new Error('decode failed'));
+   img.src=url;
+  });
+ }finally{
+  URL.revokeObjectURL(url);
+ }
+}
+
+// Shrinks the photo and turns it into a JPEG data URL (keeps the upload small and fast)
+async function prepareImage(file){
+ try{
+  const bmp=await loadBitmap(file);
+  const w=bmp.width||bmp.naturalWidth;
+  const h=bmp.height||bmp.naturalHeight;
+  const scale=Math.min(1,MAX_SIDE/Math.max(w,h));
+  const cw=Math.max(1,Math.round(w*scale));
+  const ch=Math.max(1,Math.round(h*scale));
+  const canvas=document.createElement('canvas');
+  canvas.width=cw;
+  canvas.height=ch;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,cw,ch);
+  ctx.drawImage(bmp,0,0,cw,ch);
+  if(bmp.close)bmp.close();
+  return canvas.toDataURL('image/jpeg',0.88);
+ }catch(e){
+  console.warn('Could not resize the photo:',e);
+  if(file.size<=3*1024*1024)return await fileToDataUrl(file);
+  throw new Error(S().imgPrepFail);
+ }
+}
+
 function imageErrorMessage(statusCode,serverMessage){
  const s=S();
+ if(statusCode===401)return s.needCode;
  if(statusCode===404||statusCode===405)return s.imgNotSetUp;
  if(serverMessage)return serverMessage;
  if(statusCode===413)return s.imgTooLarge;
  if(statusCode===429)return s.imgRateLimit;
  if(statusCode>=500)return s.imgServerError;
  return s.imgGenericError+' ('+statusCode+').';
+}
+
+function extFromMime(mime){
+ const m=/^image\/([a-z0-9]+)/i.exec(mime||'');
+ if(!m)return 'png';
+ return m[1].toLowerCase()==='jpeg'?'jpg':m[1].toLowerCase();
 }
 
 async function generateEditedImage(){
@@ -1054,33 +1222,30 @@ async function generateEditedImage(){
  button.textContent=S().processingBtn;
  loading.classList.add('show');
  $('studioResult').classList.remove('show');
- setStudioStatus(S().sending);
+ setStudioStatus(S().preparing);
 
  const controller=new AbortController();
  const timer=setTimeout(()=>controller.abort(),90000);
 
  try{
-  const formData=new FormData();
-  formData.append('image',selectedImageFile);
-  formData.append('prompt',prompt);
+  const imageData=await prepareImage(selectedImageFile);
+  setStudioStatus(S().sending);
 
   const response=await fetch('/api/image-edit',{
    method:'POST',
-   body:formData,
+   headers:authHeaders({'Content-Type':'application/json'}),
+   body:JSON.stringify({image:imageData,prompt}),
    signal:controller.signal
   });
 
   if(!response.ok){
-   let serverMessage='';
-   try{
-    const errorData=await response.json();
-    serverMessage=errorData.error||errorData.message||'';
-   }catch(e){}
+   const serverMessage=await readServerError(response);
    throw new Error(imageErrorMessage(response.status,serverMessage));
   }
 
   const contentType=response.headers.get('content-type')||'';
   let newUrl=null;
+  let newExt='png';
 
   if(contentType.includes('application/json')){
    const data=await response.json();
@@ -1091,14 +1256,19 @@ async function generateEditedImage(){
     value='data:image/png;base64,'+value;   // raw base64 from the server
    }
    newUrl=value;
+   const m=/^data:(image\/[a-z0-9.+-]+)/i.exec(value);
+   if(m)newExt=extFromMime(m[1]);
   }else if(contentType.startsWith('image/')){
-   newUrl=URL.createObjectURL(await response.blob());
+   const blob=await response.blob();
+   newUrl=URL.createObjectURL(blob);
+   newExt=extFromMime(blob.type);
   }else{
    throw new Error(S().imgBadFormat);
   }
 
   revokeBlob(editedImageUrl);
   editedImageUrl=newUrl;
+  editedExt=newExt;
   $('resultPreview').src=editedImageUrl;
   $('studioResult').classList.add('show');
   setStudioStatus(S().imgReady,'success');
@@ -1126,7 +1296,7 @@ function downloadImage(){
 
  const link=document.createElement('a');
  link.href=editedImageUrl;
- link.download='CANON-JR-AI-Edited-Image.png';
+ link.download='CANON-JR-AI-Edited-Image.'+editedExt;
  document.body.appendChild(link);
  link.click();
  link.remove();
@@ -1160,6 +1330,7 @@ function saveSettings(){
  const name=$('assistantName').value.trim()||'Canon';
  store.set('canonAssistantName',name);
  store.set('canonLang',lang);
+ store.set('canonAccessCode',$('accessCode').value.trim());
  applyLanguage();
  $('settingsStatus').textContent=S().settingsSaved;
 }
@@ -1167,6 +1338,8 @@ function saveSettings(){
 /* ---------- START UP ---------- */
 const savedName=store.get('canonAssistantName');
 if(savedName)$('assistantName').value=savedName;
+const savedCode=store.get('canonAccessCode');
+if(savedCode)$('accessCode').value=savedCode;
 applyLanguage();
 
 // Some browsers load speech voices late; ask once so they are ready for speak()
