@@ -1,65 +1,84 @@
+/* Canon Jr AI service worker
+   - Pages: network first (so updates arrive), saved copy when offline
+   - Other files: instant from cache, refreshed in the background
+   - /api/* is never touched
+   Change CACHE (v1 -> v2) whenever you want every device to drop old files. */
+const CACHE = 'canon-jr-ai-v1';
 
-const CACHE_NAME = "canon-jr-ai-gold-v3";
-
-const APP_FILES = [
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./icon.svg"
+const CORE = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png'
 ];
 
-self.addEventListener("install", event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_FILES))
-  );
-
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
+    caches
+      .open(CACHE)
+      .then((cache) => Promise.all(CORE.map((url) => cache.add(url).catch(() => {}))))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("fetch", event => {
-  const request = event.request;
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
 
-  if (request.method !== "GET") return;
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
 
-  const url = new URL(request.url);
-
+  const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return;
 
-  if (url.pathname.includes("/api/")) return;
-
-  if (request.mode === "navigate") {
+  // Opening the app / a page
+  if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(async () => {
-        return await caches.match("./index.html") ||
-          new Response("You are offline.", {
-            headers: {"Content-Type": "text/plain"}
-          });
-      })
+      fetch(req)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() =>
+          caches
+            .match(req)
+            .then((r) => r || caches.match('./index.html'))
+            .then((r) => r || caches.match('./'))
+        )
     );
     return;
   }
 
+  // Icons, manifest and other files
   event.respondWith(
-    fetch(request).then(response => {
-      if (response.ok) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME)
-          .then(cache => cache.put(request, copy));
+    caches.match(req).then((cached) => {
+      const refresh = fetch(req)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => cached);
+      if (cached) {
+        event.waitUntil(refresh.catch(() => {}));
+        return cached;
       }
-      return response;
-    }).catch(() => caches.match(request))
+      return refresh;
+    })
   );
 });
